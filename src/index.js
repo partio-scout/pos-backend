@@ -13,8 +13,8 @@ app.get('/', (req, res) => res.send('Hello World!'))
 
 app.post('/task-entry', async (req, res) => {
   try {
-    await postTaskEntry(req.body)
-    res.sendStatus(200)
+    const id = await postTaskEntry(req.body)
+    res.json(id).status(200)
   } catch (e) {
     res.status(e.statusCode).send(e.message)
   }
