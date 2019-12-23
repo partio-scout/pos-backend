@@ -17,3 +17,15 @@ export async function postTaskEntry(taskEntry) {
     console.log('error', error)
   }
 }
+
+export async function getTaskEntries(user_guid) {
+  try {
+    const data = await db.any(
+      'SELECT * from task_entries WHERE user_guid = $1',
+      user_guid
+    )
+    return data
+  } catch (error) {
+    console.log('error', error)
+  }
+}
