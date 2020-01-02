@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon --exec babel-node src/index.js",
+    "ngrok": "ngrok http -subdomain=pos-api-dev 3001",
     "build": "rimraf dist && babel src --out-dir dist",
     "migrate": "node-pg-migrate",
     "migrate-up": "node-pg-migrate up",

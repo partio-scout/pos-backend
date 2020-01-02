@@ -2,7 +2,7 @@ const passport = require('passport')
 const metadata = require('passport-saml-metadata')
 const SamlStrategy = require('passport-saml').Strategy
 
-const issuer = 'https://suunnittelu.beta.partio-ohjelma.fi'
+const issuer = 'https://api.pos-staging.azurewebsites.net/'
 
 const metadataConfig = {
   url: 'https://partioid-test.partio.fi/simplesaml/saml2/idp/metadata.php',
