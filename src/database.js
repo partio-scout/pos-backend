@@ -35,3 +35,35 @@ export async function getTaskEntries(user_guid) {
     console.log('error', error)
   }
 }
+
+export async function postFavouriteTask(entry) {
+  const { user_guid, task_guid } = entry
+
+  try {
+    const data = await db.one(
+      'INSERT INTO favourite_tasks(user_guid, task_guid) VALUES ($1, $2) RETURNING id',
+      [user_guid, task_guid]
+    )
+
+    const entry = await db.one(
+      'SELECT task_guid, completion_status from task_entries WHERE id = $1',
+      data.id
+    )
+
+    return entry
+  } catch (error) {
+    console.log('error', error)
+  }
+}
+
+export async function getFavouriteTasks(user_guid) {
+  try {
+    const data = await db.any(
+      'SELECT * from favourite_tasks WHERE user_guid = $1',
+      user_guid
+    )
+    return data
+  } catch (error) {
+    console.log('error', error)
+  }
+}

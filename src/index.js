@@ -3,7 +3,13 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import passport from 'passport'
-import { db, postTaskEntry, getTaskEntries } from './database'
+import {
+  db,
+  postTaskEntry,
+  getTaskEntries,
+  postFavouriteTask,
+  getFavouriteTasks,
+} from './database'
 import { configurePassport, isLoggedIn } from './auth'
 import session from 'express-session'
 import connectPgSession from 'connect-pg-simple'
@@ -98,6 +104,26 @@ const main = async () => {
   app.get('/task-entries', isLoggedIn, async (req, res) => {
     try {
       const entries = await getTaskEntries(req.user.membernumber)
+      res.json(entries).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.post('/favourite', isLoggedIn, async (req, res) => {
+    try {
+      const data = req.body
+      data.user_guid = req.user.membernumber
+      const id = await postFavouriteTask(data)
+      res.json(id).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.get('/favourites', isLoggedIn, async (req, res) => {
+    try {
+      const entries = await getFavouriteTasks(req.user.membernumber)
       res.json(entries).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
