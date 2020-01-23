@@ -3,16 +3,18 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import passport from 'passport'
-import { postTaskEntry, getTaskEntries } from './database'
-import { configurePassport } from './auth'
-const cookieParser = require('cookie-parser')
-const cookieSession = require('cookie-session')
+import { db, postTaskEntry, getTaskEntries } from './database'
+import { configurePassport, isLoggedIn } from './auth'
+import session from 'express-session'
+import connectPgSession from 'connect-pg-simple'
+
+const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000'
 
 const main = async () => {
   await configurePassport()
 
+  const pgSession = connectPgSession(session)
   const app = express()
-  app.use(cookieParser())
 
   app.use(bodyParser.json())
   app.use(
@@ -20,22 +22,27 @@ const main = async () => {
       extended: true,
     })
   )
-
+  app.set('trust proxy', 1)
   app.use(
-    cookieSession({
-      name: 'session',
-      keys: ['key1'],
-
+    session({
+      store: new pgSession({
+        pgPromise: db,
+      }),
+      secret: process.env.SECRET,
+      resave: false,
+      saveUninitialized: false,
       // Cookie Options
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      cookie: {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      },
     })
   )
 
   const corsOptions = {
     origin: [
-      'http://localhost:3000',
       'https://partioid-test.partio.fi',
       'https://id.partio.fi',
+      clientUrl,
     ],
     credentials: true,
   }
@@ -61,24 +68,33 @@ const main = async () => {
       failureRedirect: '/',
       failureFlash: true,
     }),
-    (req, res) => {
-      console.log('/login/callback')
-      res.redirect('http://localhost:3000/')
+    async (req, res) => {
+      res.redirect(clientUrl)
     }
   )
+  app.get('/user', isLoggedIn, async (req, res) => {
+    res.json({
+      name: `${req.user.firstname} ${req.user.lastname}`,
+      canMarkDone: req.user.canMarkDone,
+    })
+  })
 
-  app.post('/task-entry', async (req, res) => {
+  app.post('/task-entry', isLoggedIn, async (req, res) => {
     try {
-      const id = await postTaskEntry(req.body)
+      const data = req.body
+      data.user_guid = req.user.membernumber
+      data.status = req.user.canMarkDone ? 'COMPLETED' : 'COMPLETION_REQUESTED'
+
+      const id = await postTaskEntry(data)
       res.json(id).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
     }
   })
 
-  app.get('/task-entries/:userGuid', async (req, res) => {
+  app.get('/task-entries', isLoggedIn, async (req, res) => {
     try {
-      const entries = await getTaskEntries(req.params.userGuid)
+      const entries = await getTaskEntries(req.user.membernumber)
       res.json(entries).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
