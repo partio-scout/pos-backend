@@ -27,7 +27,7 @@ export async function postTaskEntry(taskEntry) {
 export async function getTaskEntries(user_guid) {
   try {
     const data = await db.any(
-      'SELECT * from task_entries WHERE user_guid = $1',
+      'SELECT task_guid, completion_status from task_entries WHERE user_guid = $1',
       user_guid
     )
     return data
