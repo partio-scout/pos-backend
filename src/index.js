@@ -83,7 +83,10 @@ const main = async () => {
     try {
       const data = req.body
       data.user_guid = req.user.membernumber
-      data.status = req.user.canMarkDone ? 'COMPLETED' : 'COMPLETION_REQUESTED'
+      data.created_by = req.user.membernumber
+      data.completion_status = req.user.canMarkDone
+        ? 'COMPLETED'
+        : 'COMPLETION_REQUESTED'
 
       const id = await postTaskEntry(data)
       res.json(id).status(200)
