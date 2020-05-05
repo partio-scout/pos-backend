@@ -46,7 +46,7 @@ export async function postFavouriteTask(entry) {
     )
 
     const entry = await db.one(
-      'SELECT task_guid, completion_status from task_entries WHERE id = $1',
+      'SELECT task_guid from favourite_tasks WHERE id = $1',
       data.id
     )
 
