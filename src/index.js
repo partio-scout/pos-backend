@@ -13,6 +13,7 @@ import {
 import { configurePassport, isLoggedIn } from './auth'
 import session from 'express-session'
 import connectPgSession from 'connect-pg-simple'
+import 'regenerator-runtime/runtime.js'
 
 const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000'
 
