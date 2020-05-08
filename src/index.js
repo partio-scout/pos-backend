@@ -50,6 +50,8 @@ const main = async () => {
       'https://partioid-test.partio.fi',
       'https://id.partio.fi',
       clientUrl,
+      'https://pos-staging.azurewebsites.net',
+      'https://pos-production.azurewebsites.net',
     ],
     credentials: true,
   }
