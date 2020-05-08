@@ -23,6 +23,10 @@ jobs:
           # deploy to Azure Web App.
           yarn install
           yarn build
+      - name: copy web.config and node_modules to dist
+        run: |
+          cp web.config dist/web.config
+          cp -r node_modules dist/node_modules
       - name: 'Deploy to Azure WebApp'
         uses: azure/webapps-deploy@v2
         with:
