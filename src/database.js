@@ -67,3 +67,19 @@ export async function getFavouriteTasks(user_guid) {
     console.log('error', error)
   }
 }
+
+export async function getTables() {
+  try {
+    const tables = await db.any(
+      'SELECT table_name\n' +
+        '  FROM information_schema.tables\n' +
+        " WHERE table_schema='public'\n" +
+        "   AND table_type='BASE TABLE'"
+    )
+    return tables
+  } catch (error) {
+    {
+      console.log('error', error)
+    }
+  }
+}
