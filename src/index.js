@@ -11,6 +11,7 @@ import {
   getFavouriteTasks,
 } from './database'
 import { configurePassport, isLoggedIn } from './auth'
+import { getHealth } from './health'
 import session from 'express-session'
 import connectPgSession from 'connect-pg-simple'
 import 'regenerator-runtime/runtime.js'
@@ -128,6 +129,15 @@ const main = async () => {
     try {
       const entries = await getFavouriteTasks(req.user.membernumber)
       res.json(entries).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.get('/health', async (req, res) => {
+    try {
+      const health = await getHealth(res)
+      res.json(health).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
     }
