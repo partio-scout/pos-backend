@@ -7,7 +7,7 @@ import request from 'request-promise'
 const issuer = process.env.ISSUER
 
 const metadataConfig = {
-  url: 'https://partioid-test.partio.fi/simplesaml/saml2/idp/metadata.php',
+  url: process.env.METADATA_URL,
   timeout: 30000,
 }
 
