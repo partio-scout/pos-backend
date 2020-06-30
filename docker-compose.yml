@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  db:
+    image: postgres:11
+    container_name: partio-sovellus-db
+    ports:
+      - 5432:5432
+    environment:
+      TZ: 'Europe/Helsinki'
+      PGUSER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pos

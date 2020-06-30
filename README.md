@@ -14,7 +14,8 @@ This backend application and Postgre database are deployed to an Azure.
 
 ### Database
 
-You must have a PostgreSQL running and database named pos available. You can create needed tables by running `yarn migrate-up`.
+You can start database by running `docker-compose up`.
+You can create needed tables by running `yarn migrate-up`.
 
 ### Ngrok
 
