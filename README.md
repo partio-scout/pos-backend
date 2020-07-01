@@ -19,7 +19,9 @@ You can create needed tables by running `yarn migrate-up`.
 
 ### Ngrok
 
+Install ngrok, it is preferred to use Homebrew `brew cask install ngrok`.
 Get content for ngrok-config from LastPass and place it to `~/.ngrok2/ngrok.yml`. Also edit your `/etc/hosts` and add `partio.ngrok.io` as a hostname for 127.0.0.1
+Start ngrok with `ngrok start partio`.
 
 ### Environmental variables
 
