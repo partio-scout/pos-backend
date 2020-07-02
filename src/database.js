@@ -14,7 +14,7 @@ export async function postTaskEntry(taskEntry) {
     )
 
     const entry = await db.one(
-      'SELECT task_guid, completion_status from task_entries WHERE id = $1',
+      'SELECT task_guid, completion_status FROM task_entries WHERE id = $1',
       data.id
     )
 
@@ -27,8 +27,8 @@ export async function postTaskEntry(taskEntry) {
 export async function getTaskEntries(user_guid) {
   try {
     const data = await db.any(
-      'SELECT task_guid, completion_status from task_entries WHERE user_guid = $1',
-      user_guid
+      'SELECT task_guid, completion_status FROM task_entries WHERE user_guid = $1',
+      user_guid.toString()
     )
     return data
   } catch (error) {
@@ -46,7 +46,7 @@ export async function postFavouriteTask(entry) {
     )
 
     const entry = await db.one(
-      'SELECT task_guid from favourite_tasks WHERE id = $1',
+      'SELECT task_guid FROM favourite_tasks WHERE id = $1',
       data.id
     )
 
@@ -59,8 +59,8 @@ export async function postFavouriteTask(entry) {
 export async function getFavouriteTasks(user_guid) {
   try {
     const data = await db.any(
-      'SELECT * from favourite_tasks WHERE user_guid = $1',
-      user_guid
+      'SELECT DISTINCT ON (task_guid) * FROM favourite_tasks WHERE user_guid = $1',
+      user_guid.toString()
     )
     return data
   } catch (error) {
