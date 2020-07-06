@@ -26,7 +26,7 @@ export async function getMemberImage(memberId) {
     )
     return memberImage
   } catch (e) {
-    console.log(e)
+    console.log(`Error getting the member image ${e}`)
     return null
   }
 }
