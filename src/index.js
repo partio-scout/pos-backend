@@ -1,5 +1,6 @@
 require('dotenv').config()
 import express from 'express'
+const router = express.Router()
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import passport from 'passport'
@@ -10,6 +11,7 @@ import {
   postFavouriteTask,
   getFavouriteTasks,
 } from './database'
+import { getProfile } from './profile'
 import { configurePassport, isLoggedIn } from './auth'
 import { getHealth } from './health'
 import session from 'express-session'
@@ -48,6 +50,7 @@ const main = async () => {
 
   const corsOptions = {
     origin: [
+      '*',
       'https://partioid-test.partio.fi',
       'https://id.partio.fi',
       clientUrl,
@@ -134,6 +137,15 @@ const main = async () => {
     }
   })
 
+  app.get('/profile', isLoggedIn, async (req, res) => {
+    try {
+      const profile = await getProfile(req.user.membernumber)
+      res.json(profile).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
   app.get('/health', async (req, res) => {
     try {
       const health = await getHealth(res)
@@ -143,6 +155,7 @@ const main = async () => {
     }
   })
 
+  app.use('/', router)
   app.listen(process.env.PORT || 3001, () =>
     console.log('listening on port 3001')
   )
