@@ -95,11 +95,15 @@ const main = async () => {
   app.post('/task-entry', isLoggedIn, async (req, res) => {
     try {
       const data = req.body
+      const status = data.completion_status
       data.user_guid = req.user.membernumber
       data.created_by = req.user.membernumber
-      data.completion_status = req.user.canMarkDone
-        ? 'COMPLETED'
-        : 'COMPLETION_REQUESTED'
+      data.completion_status =
+        status === 'ACTIVE'
+          ? status
+          : req.user.canMarkDone
+          ? 'COMPLETED'
+          : 'COMPLETION_REQUESTED'
 
       const id = await postTaskEntry(data)
       res.json(id).status(200)

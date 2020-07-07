@@ -33,7 +33,7 @@ No tests at the moment.
 
 ## 3.3. Start the application locally
 
-To start the dev env run `yarn start`.
+To start the dev env run `yarn dev`.
 
 ## 3.4. Version control
 
