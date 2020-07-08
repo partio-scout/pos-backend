@@ -12,6 +12,7 @@ import {
   getFavouriteTasks,
 } from './database'
 import { getProfile } from './profile'
+import { getGroups } from './groups'
 import { configurePassport, isLoggedIn } from './auth'
 import { getHealth } from './health'
 import session from 'express-session'
@@ -145,6 +146,29 @@ const main = async () => {
     try {
       const profile = await getProfile(req.user.membernumber)
       res.json(profile).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.get('/groups', isLoggedIn, async (req, res) => {
+    try {
+      const groups = await getGroups(req.user.membernumber)
+      res.json(groups).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.post('/member-entry', isLoggedIn, async (req, res) => {
+    try {
+      const data = req.body
+      data.created_by = req.user.membernumber
+      data.completion_status = 'COMPLETED'
+
+      //TODO: do we need to check that this user has right the to approve
+      const id = await postTaskEntry(data)
+      res.json(id).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
     }
