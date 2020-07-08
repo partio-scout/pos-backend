@@ -10,6 +10,7 @@ import {
   getTaskEntries,
   postFavouriteTask,
   getFavouriteTasks,
+  deleteFavouriteTask,
 } from './database'
 import { getProfile } from './profile'
 import { configurePassport, isLoggedIn } from './auth'
@@ -126,6 +127,18 @@ const main = async () => {
       const data = req.body
       data.user_guid = req.user.membernumber
       const id = await postFavouriteTask(data)
+      res.json(id).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.delete('/favourite/:task_guid', isLoggedIn, async (req, res) => {
+    try {
+      const data = req.body
+      data.user_guid = req.user.membernumber
+      data.task_guid = req.params.task_guid
+      const id = await deleteFavouriteTask(data)
       res.json(id).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
