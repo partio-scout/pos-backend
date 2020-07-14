@@ -20,6 +20,7 @@ async function getMemberData(groupMembers) {
         {},
         {
           memberId: groupMember.id.id,
+          isGroupLeader: groupMember.is_leader,
           memberName:
             groupMember.name.firstname + ' ' + groupMember.name.lastname,
           memberTasks: memberTaskEntries,
@@ -29,7 +30,16 @@ async function getMemberData(groupMembers) {
   )
 }
 
-export async function getGroups(userNumber) {
+function filterGroups(userNumber, groupsData) {
+  return groupsData.filter(groupData => {
+    const groupMember = groupData.members.filter(member => {
+      return member.memberId === userNumber
+    })
+    return groupMember[0].isGroupLeader === true
+  })
+}
+
+async function getAllGroups(userNumber) {
   const member = await getMember(userNumber)
   if (!member.is_leader) {
     throw Error('User is not a group leader').statusCode(403)
@@ -56,4 +66,11 @@ export async function getGroups(userNumber) {
   )
 
   return groupAndMemberData
+}
+
+export async function getGroups(userNumber) {
+  const allGroups = await getAllGroups(userNumber)
+  const filteredGroups = filterGroups(userNumber, allGroups)
+
+  return filteredGroups
 }
