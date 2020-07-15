@@ -56,11 +56,37 @@ export async function postFavouriteTask(entry) {
   }
 }
 
+export async function deleteFavouriteTask(entry) {
+  const { user_guid, task_guid } = entry
+  try {
+    const data = await db.result(
+      'DELETE FROM favourite_tasks WHERE user_guid = $1 AND task_guid = $2',
+      [user_guid, task_guid]
+    )
+    return data
+  } catch (error) {
+    console.log('error', error)
+  }
+}
+
 export async function getFavouriteTasks(user_guid) {
   try {
     const data = await db.any(
       'SELECT DISTINCT ON (task_guid) * FROM favourite_tasks WHERE user_guid = $1',
       user_guid.toString()
+    )
+    return data
+  } catch (error) {
+    console.log('error', error)
+  }
+}
+
+export async function deleteActiveTask(entry) {
+  const { user_guid, task_guid } = entry
+  try {
+    const data = await db.result(
+      'DELETE FROM task_entries WHERE user_guid = $1 AND task_guid = $2',
+      [user_guid, task_guid]
     )
     return data
   } catch (error) {

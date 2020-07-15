@@ -10,6 +10,8 @@ import {
   getTaskEntries,
   postFavouriteTask,
   getFavouriteTasks,
+  deleteFavouriteTask,
+  deleteActiveTask,
 } from './database'
 import { getProfile } from './profile'
 import { configurePassport, isLoggedIn } from './auth'
@@ -132,10 +134,34 @@ const main = async () => {
     }
   })
 
+  app.delete('/favourite/:task_guid', isLoggedIn, async (req, res) => {
+    try {
+      const data = req.body
+      data.user_guid = req.user.membernumber
+      data.task_guid = req.params.task_guid
+      const id = await deleteFavouriteTask(data)
+      res.json(id).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
   app.get('/favourites', isLoggedIn, async (req, res) => {
     try {
       const entries = await getFavouriteTasks(req.user.membernumber)
       res.json(entries).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.delete('/active/:task_guid', isLoggedIn, async (req, res) => {
+    try {
+      const data = req.body
+      data.user_guid = req.user.membernumber
+      data.task_guid = req.params.task_guid
+      const id = await deleteActiveTask(data)
+      res.json(id).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
     }
