@@ -1,6 +1,6 @@
 import {
   getMember,
-  getGroupLeadersGroups,
+  getGroupsFromKuksa,
   getGroupInfo,
   getGroupMembers,
 } from './kuksa'
@@ -33,7 +33,7 @@ async function getMemberData(groupMembers) {
 function filterGroups(userNumber, groupsData) {
   return groupsData.filter(groupData => {
     const groupMember = groupData.members.filter(member => {
-      return member.memberId === userNumber
+      return member.memberId == userNumber
     })
     return groupMember[0].isGroupLeader === true
   })
@@ -41,10 +41,7 @@ function filterGroups(userNumber, groupsData) {
 
 async function getAllGroups(userNumber) {
   const member = await getMember(userNumber)
-  if (!member.is_leader) {
-    throw Error('User is not a group leader').statusCode(403)
-  }
-  const memberGroups = await getGroupLeadersGroups(userNumber)
+  const memberGroups = await getGroupsFromKuksa(userNumber)
   const groupAndMemberData = Promise.all(
     memberGroups.groups.map(async group => {
       const groupInfo = await getGroupInfo(userNumber, group.id)
@@ -71,6 +68,5 @@ async function getAllGroups(userNumber) {
 export async function getGroups(userNumber) {
   const allGroups = await getAllGroups(userNumber)
   const filteredGroups = filterGroups(userNumber, allGroups)
-
   return filteredGroups
 }

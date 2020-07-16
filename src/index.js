@@ -68,6 +68,14 @@ const main = async () => {
   app.use(passport.initialize())
   app.use(passport.session())
 
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
+    res.locals.error = err
+    if (err.status >= 100 && err.status < 600) res.status(err.status)
+    else res.status(500)
+    res.render('error')
+  })
+
   app.get('/', (_, res) => res.send('OK'))
 
   app.get(

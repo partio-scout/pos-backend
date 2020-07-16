@@ -29,7 +29,7 @@ export async function getMemberImage(memberId) {
   }
 }
 
-export async function getGroupLeadersGroups(memberId) {
+export async function getGroupsFromKuksa(memberId) {
   try {
     const groups = await request(
       `${process.env.KUKSA}/members/${memberId}/groups`,
