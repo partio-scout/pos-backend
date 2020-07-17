@@ -73,7 +73,7 @@ const main = async () => {
     res.locals.error = err
     if (err.status >= 100 && err.status < 600) res.status(err.status)
     else res.status(500)
-    res.render('error')
+    res.json({ error: err })
   })
 
   app.get('/', (_, res) => res.send('OK'))
