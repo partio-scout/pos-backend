@@ -14,6 +14,7 @@ import {
   deleteActiveTask,
 } from './database'
 import { getProfile } from './profile'
+import { getGroups } from './groups'
 import { configurePassport, isLoggedIn } from './auth'
 import { getHealth } from './health'
 import session from 'express-session'
@@ -66,6 +67,14 @@ const main = async () => {
 
   app.use(passport.initialize())
   app.use(passport.session())
+
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
+    res.locals.error = err
+    if (err.status >= 100 && err.status < 600) res.status(err.status)
+    else res.status(500)
+    res.json({ error: err })
+  })
 
   app.get('/', (_, res) => res.send('OK'))
 
@@ -171,6 +180,29 @@ const main = async () => {
     try {
       const profile = await getProfile(req.user.membernumber)
       res.json(profile).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.get('/groups', isLoggedIn, async (req, res) => {
+    try {
+      const groups = await getGroups(req.user.membernumber)
+      res.json(groups).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.post('/member-entry', isLoggedIn, async (req, res) => {
+    try {
+      const data = req.body
+      data.created_by = req.user.membernumber
+      data.completion_status = 'COMPLETED'
+
+      //TODO: do we need to check that this user has right the to approve
+      const id = await postTaskEntry(data)
+      res.json(id).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
     }
