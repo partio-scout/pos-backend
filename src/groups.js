@@ -10,12 +10,6 @@ async function getMemberData(groupMembers) {
   return Promise.all(
     groupMembers.members.map(async groupMember => {
       const allMemberTaskEntries = await getTaskEntries(groupMember.id.id)
-      const memberTaskEntries = allMemberTaskEntries.filter(taskEntry => {
-        return (
-          taskEntry.completion_status === 'ACTIVE' ||
-          taskEntry.completion_status === 'COMPLETION_REQUESTED'
-        )
-      })
       return Object.assign(
         {},
         {
@@ -23,7 +17,7 @@ async function getMemberData(groupMembers) {
           isGroupLeader: groupMember.is_leader,
           memberName:
             groupMember.name.firstname + ' ' + groupMember.name.lastname,
-          memberTasks: memberTaskEntries,
+          memberTasks: allMemberTaskEntries,
         }
       )
     })
@@ -47,12 +41,17 @@ async function getAllGroups(userNumber) {
       const groupInfo = await getGroupInfo(userNumber, group.id)
       const groupMembers = await getGroupMembers(userNumber, group.id)
       const memberData = await getMemberData(groupMembers)
+      const ageGroupId =
+        (memberData[0] &&
+          (await getMember(memberData[0].memberId)).age_groupId) ||
+        4
       return Object.assign(
         {},
         {
           id: group.id,
           name: group.name,
           ageGroup: groupInfo.age_groups[0],
+          ageGroupId,
           troop: groupInfo.troops.filter(
             troop => troop.id === member.default_troop_id
           ),
