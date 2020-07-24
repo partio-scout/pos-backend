@@ -1,6 +1,4 @@
-require('dotenv').config()
 import express from 'express'
-const router = express.Router()
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import passport from 'passport'
@@ -8,10 +6,11 @@ import {
   db,
   postTaskEntry,
   getTaskEntries,
+  removeMemberTask,
+  deleteActiveTask,
   postFavouriteTask,
   getFavouriteTasks,
   deleteFavouriteTask,
-  deleteActiveTask,
 } from './database'
 import { getProfile } from './profile'
 import { getGroups } from './groups'
@@ -21,6 +20,8 @@ import session from 'express-session'
 import connectPgSession from 'connect-pg-simple'
 import 'regenerator-runtime/runtime.js'
 
+require('dotenv').config()
+const router = express.Router()
 const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000'
 
 const main = async () => {
@@ -202,6 +203,18 @@ const main = async () => {
 
       //TODO: do we need to check that this user has right the to approve
       const id = await postTaskEntry(data)
+      res.json(id).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.post('/member-entry/remove-completed', isLoggedIn, async (req, res) => {
+    try {
+      const data = req.body
+      data.created_by = req.user.membernumber
+      //TODO: do we need to check that this user has the right to remove the task
+      const id = await removeMemberTask(data)
       res.json(id).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)

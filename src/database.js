@@ -24,6 +24,21 @@ export async function postTaskEntry(taskEntry) {
   }
 }
 
+export async function removeMemberTask(taskEntry) {
+  const { user_guid, task_guid } = taskEntry
+
+  try {
+    await db.one(
+      'DELETE FROM task_entries WHERE user_guid=$1 AND task_guid=$2 AND (completion_status=$3 OR completion_status=$4)',
+      [user_guid, task_guid, 'COMPLETED', 'COMPLETION_REQUESTED']
+    )
+
+    return true
+  } catch (error) {
+    console.log('error', error)
+  }
+}
+
 export async function getTaskEntries(user_guid) {
   try {
     const data = await db.any(
