@@ -27,7 +27,6 @@ module.exports.configurePassport = async () => {
       profile,
       done
     ) {
-      console.log('profile:', profile)
       const scout = {
         firstname: profile.firstname,
         lastname: profile.lastname,
@@ -65,12 +64,10 @@ module.exports.configurePassport = async () => {
     passport.use('saml', samlStrategy)
 
     passport.serializeUser((user, done) => {
-      console.log('serializeUser:', user)
       done(null, user)
     })
 
     passport.deserializeUser((user, done) => {
-      console.log('deserializeUser:', user)
       done(null, user)
     })
 
