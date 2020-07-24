@@ -209,7 +209,7 @@ const main = async () => {
     }
   })
 
-  app.post('/member-entry/remove-completed', isLoggedIn, async (req, res) => {
+  app.delete('/member-entry', isLoggedIn, async (req, res) => {
     try {
       const data = req.body
       data.created_by = req.user.membernumber
