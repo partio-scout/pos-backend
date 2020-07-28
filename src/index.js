@@ -199,22 +199,9 @@ const main = async () => {
     try {
       const data = req.body
       data.created_by = req.user.membernumber
-      data.completion_status = 'COMPLETED'
 
       //TODO: do we need to check that this user has right the to approve
       const id = await postTaskEntry(data)
-      res.json(id).status(200)
-    } catch (e) {
-      res.status(e.statusCode).send(e.message)
-    }
-  })
-
-  app.delete('/member-entry', isLoggedIn, async (req, res) => {
-    try {
-      const data = req.body
-      data.created_by = req.user.membernumber
-      //TODO: do we need to check that this user has the right to remove the task
-      const id = await removeMemberTask(data)
       res.json(id).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)

@@ -10,6 +10,10 @@ async function getMemberData(groupMembers) {
   return Promise.all(
     groupMembers.members.map(async groupMember => {
       const allMemberTaskEntries = await getTaskEntries(groupMember.id.id)
+      const taskEntries = allMemberTaskEntries.reduce((acc, task) => {
+        acc[task.task_guid] = task.completion_status
+        return acc
+      }, {})
       return Object.assign(
         {},
         {
@@ -17,7 +21,7 @@ async function getMemberData(groupMembers) {
           isGroupLeader: groupMember.is_leader,
           memberName:
             groupMember.name.firstname + ' ' + groupMember.name.lastname,
-          memberTasks: allMemberTaskEntries,
+          memberTasks: taskEntries,
         }
       )
     })
