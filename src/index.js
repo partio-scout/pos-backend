@@ -48,8 +48,6 @@ const main = async () => {
       // Cookie Options
       cookie: {
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        sameSite: 'none',
-        secure: true,
       },
     })
   )
