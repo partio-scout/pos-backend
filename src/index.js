@@ -6,7 +6,6 @@ import {
   db,
   postTaskEntry,
   getTaskEntries,
-  removeMemberTask,
   deleteActiveTask,
   postFavouriteTask,
   getFavouriteTasks,
@@ -90,6 +89,11 @@ const main = async () => {
       failureRedirect: '/failure',
     })
   )
+
+  app.get('/logout', (req, res) => {
+    req.logout()
+    res.redirect(clientUrl)
+  })
 
   app.post(
     '/login/callback',
