@@ -26,7 +26,7 @@ async function getMemberData(groupMembers) {
       )
     })
   ).catch(error => {
-    console.error('Failed to get member data: ', error)
+    console.log('Failed to get member data: ', error)
   })
 }
 
@@ -66,7 +66,7 @@ async function getAllGroups(userNumber) {
       )
     })
   ).catch(error => {
-    console.error('Failed to get groupAndMemberData: ', error)
+    console.log('Failed to get groupAndMemberData: ', error)
   })
 
   return groupAndMemberData
@@ -78,6 +78,6 @@ export async function getGroups(userNumber) {
     const filteredGroups = filterGroups(userNumber, allGroups)
     return filteredGroups || []
   } catch (error) {
-    console.error('Get groups failed with error: ', error)
+    console.log('Get groups failed with error: ', error)
   }
 }
