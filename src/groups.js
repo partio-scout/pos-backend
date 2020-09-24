@@ -27,6 +27,7 @@ async function getMemberData(groupMembers) {
     })
   ).catch(error => {
     console.log('Failed to get member data: ', error)
+    return error
   })
 }
 
@@ -67,6 +68,7 @@ async function getAllGroups(userNumber) {
     })
   ).catch(error => {
     console.log('Failed to get groupAndMemberData: ', error)
+    return error
   })
 
   return groupAndMemberData
@@ -79,5 +81,6 @@ export async function getGroups(userNumber) {
     return filteredGroups || []
   } catch (error) {
     console.log('Get groups failed with error: ', error)
+    return error
   }
 }
