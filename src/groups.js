@@ -69,7 +69,12 @@ async function getAllGroups(userNumber) {
 }
 
 export async function getGroups(userNumber) {
-  const allGroups = await getAllGroups(userNumber)
-  const filteredGroups = filterGroups(userNumber, allGroups)
-  return filteredGroups
+  try {
+    const allGroups = await getAllGroups(userNumber)
+    const filteredGroups = filterGroups(userNumber, allGroups)
+    return filteredGroups
+  } catch (error) {
+    console.error('Failed to fetch groups: ', error)
+  }
+  return []
 }
