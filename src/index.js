@@ -26,8 +26,6 @@ const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000'
 
 const cookieConfig = {
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  sameSite: 'none',
-  secure: true,
 }
 
 const main = async () => {
