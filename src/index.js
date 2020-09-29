@@ -1,4 +1,5 @@
 import express from 'express'
+import https from 'https'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import passport from 'passport'
@@ -90,10 +91,14 @@ const main = async () => {
     })
   )
 
-  app.get('/logout', (req, res) => {
-    req.logout()
-    res.redirect(clientUrl)
-  })
+  app.get(
+    '/logout',
+    https.get(process.env.LOGOUT_URL, res => {
+      res.on('end', () => {
+        console.log(res)
+      })
+    })
+  )
 
   app.post(
     '/login/callback',
@@ -105,6 +110,13 @@ const main = async () => {
       res.redirect(clientUrl)
     }
   )
+
+  app.post('/logout/callback', async (req, res) => {
+    req.logout()
+    req.clearCache()
+    res.redirect(clientUrl)
+  })
+
   app.get('/user', isLoggedIn, async (req, res) => {
     res.json({
       name: `${req.user.firstname} ${req.user.lastname}`,
