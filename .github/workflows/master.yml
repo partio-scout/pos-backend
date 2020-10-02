@@ -1,6 +1,9 @@
-name: Deploy Node.js to Azure Web App
+name: Deploy Node.js to Azure Web App, Master
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 env:
   AZURE_WEBAPP_NAME: pos-backend-staging # set this to your application's name
