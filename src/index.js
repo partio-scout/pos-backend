@@ -189,6 +189,7 @@ const main = async () => {
   })
 
   app.get('/groups', isLoggedIn, async (req, res) => {
+    console.log('getGroupsReqUser', req.user)
     try {
       const groups = await getGroups(req.user.membernumber)
       res.json(groups).status(200)
