@@ -31,7 +31,6 @@ async function getMemberData(groupMembers) {
 }
 
 function filterGroups(userNumber, groupsData) {
-  console.log('GROUPSDATA', groupsData)
   return groupsData.filter(groupData => {
     const groupMember = groupData.members.find(member => {
       return member.memberId == userNumber
@@ -42,14 +41,16 @@ function filterGroups(userNumber, groupsData) {
 
 async function getAllGroups(userNumber) {
   const member = await getMember(userNumber)
-  console.log('MEMBER', member)
   const memberGroups = await getGroupsFromKuksa(userNumber)
-  console.log('MEMBERGROUPS', memberGroups)
+  console.log('memberGroupsFromKuksa', memberGroups)
   const groupAndMemberData = Promise.all(
     memberGroups.groups.map(async group => {
       const groupInfo = await getGroupInfo(userNumber, group.id)
+      console.log('getGroupInfo', groupInfo)
       const groupMembers = await getGroupMembers(userNumber, group.id)
+      console.log('getGroupMembers', groupMembers)
       const memberData = await getMemberData(groupMembers)
+      console.log('getMemberData', memberData)
       const ageGroupId =
         (memberData[0] &&
           (await getMember(memberData[0].memberId)).age_groupId) ||

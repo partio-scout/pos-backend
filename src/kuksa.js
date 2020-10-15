@@ -9,6 +9,7 @@ const options = {
 }
 
 export async function getMember(memberId) {
+  console.log('memberIDKuksa', memberId)
   const memberData = await request(
     `${process.env.KUKSA}/members/${memberId}`,
     options
