@@ -6,7 +6,6 @@ import {
   db,
   postTaskEntry,
   getTaskEntries,
-  removeMemberTask,
   deleteActiveTask,
   postFavouriteTask,
   getFavouriteTasks,
@@ -26,6 +25,8 @@ const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000'
 
 const cookieConfig = {
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  sameSite: 'none',
+  secure: clientUrl === 'http://localhost:3000' ? false : true,
 }
 
 const main = async () => {
@@ -191,7 +192,6 @@ const main = async () => {
   app.get('/groups', isLoggedIn, async (req, res) => {
     try {
       const groups = await getGroups(req.user.membernumber)
-      console.log('GROUPS', groups)
       res.json(groups).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
