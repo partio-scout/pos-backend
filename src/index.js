@@ -24,9 +24,11 @@ const router = express.Router()
 const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000'
 
 const cookieConfig = {
-  maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  sameSite: 'none',
-  secure: clientUrl === 'http://localhost:3000' ? false : true,
+  maxAge: 24 * 60 * 60 * 1000,
+}
+if (process.env.NODE_ENV !== 'development') {
+  cookieConfig.sameSite = 'none'
+  cookieConfig.secure = true
 }
 
 const main = async () => {
