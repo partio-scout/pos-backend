@@ -221,6 +221,15 @@ const main = async () => {
     }
   })
 
+  app.post('/groups/mark-task-done/:task_id', isLoggedIn, async (req, res) => {
+    // TODO:
+    // Check that req.user is a group leader
+    // Get user ids from req.body
+    // Mark the task with the id from req.params.task_guid as completed for all the users
+    // Loop trough the users and call (const id = await postTaskEntry(data))
+    // Data should be: { user_guid, created_by, task_guid, completion_status }
+  })
+
   app.use('/', router)
   app.listen(process.env.PORT || 3001, () =>
     console.log('listening on port 3001')
