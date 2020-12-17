@@ -1,0 +1,28 @@
+name: Node.js 
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+env:
+  NODE_VERSION: '12.x' # set this to the node version to use
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: yarn install and build
+        run: |
+          # Build and test the project, then
+          # deploy to Azure Web App.
+          yarn install
+          yarn build
+
+

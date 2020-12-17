@@ -32,10 +32,10 @@ async function getMemberData(groupMembers) {
 
 function filterGroups(userNumber, groupsData) {
   return groupsData.filter(groupData => {
-    const groupMember = groupData.members.filter(member => {
+    const groupMember = groupData.members.find(member => {
       return member.memberId == userNumber
     })
-    return groupMember[0].isGroupLeader === true
+    return groupMember ? groupMember.isGroupLeader : false
   })
 }
 
