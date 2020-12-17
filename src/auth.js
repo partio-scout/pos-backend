@@ -2,6 +2,7 @@ const passport = require('passport')
 const metadata = require('passport-saml-metadata')
 const SamlStrategy = require('passport-saml').Strategy
 import request from 'request-promise'
+import { getGroups } from './groups'
 
 // const issuer = 'https://api.pos-staging.azurewebsites.net/'
 const issuer = process.env.ISSUER
@@ -87,9 +88,10 @@ export const isLoggedIn = (req, res, next) => {
   res.status(401).send('Unauthorized')
 }
 
-export const isGroupLeader = (req, res, next) => {
-  if (req.user) {
-    // TODO: check if the user is a group leader
+export const isGroupLeader = async (req, res, next) => {
+  const userId = req.user.membernumber
+  const groups = await getGroups(userId)
+  if (groups && groups.length) {
     return next()
   }
 

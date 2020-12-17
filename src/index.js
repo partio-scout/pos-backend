@@ -235,15 +235,15 @@ const main = async () => {
           Promise.resolve(
             postTaskEntry({
               user_guid,
-              created_by: req.user.user_guid,
-              task_guid: req.params.task_guid,
+              created_by: req.user.membernumber,
+              task_guid: req.params.task_id,
               completion_status: 'COMPLETED',
             })
           )
         )
 
-        await Promise.all(promises)
-        res.status(200)
+        const entries = await Promise.all(promises)
+        res.json(entries).status(200)
       } catch (e) {
         res.status(e.statusCode).send(e.message)
       }
