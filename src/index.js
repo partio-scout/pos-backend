@@ -6,7 +6,6 @@ import {
   db,
   postTaskEntry,
   getTaskEntries,
-  removeMemberTask,
   deleteActiveTask,
   postFavouriteTask,
   getFavouriteTasks,
@@ -14,7 +13,7 @@ import {
 } from './database'
 import { getProfile } from './profile'
 import { getGroups } from './groups'
-import { configurePassport, isLoggedIn } from './auth'
+import { configurePassport, isLoggedIn, isGroupLeader } from './auth'
 import { getHealth } from './health'
 import session from 'express-session'
 import connectPgSession from 'connect-pg-simple'
@@ -204,7 +203,7 @@ const main = async () => {
       const data = req.body
       data.created_by = req.user.membernumber
 
-      //TODO: do we need to check that this user has right the to approve
+      //TODO: do we need to check that this user has the right to approve
       const id = await postTaskEntry(data)
       res.json(id).status(200)
     } catch (e) {
@@ -221,14 +220,33 @@ const main = async () => {
     }
   })
 
-  app.post('/groups/mark-task-done/:task_id', isLoggedIn, async (req, res) => {
-    // TODO:
-    // Check that req.user is a group leader
-    // Get user ids from req.body
-    // Mark the task with the id from req.params.task_guid as completed for all the users
-    // Loop trough the users and call (const id = await postTaskEntry(data))
-    // Data should be: { user_guid, created_by, task_guid, completion_status }
-  })
+  app.post(
+    '/groups/mark-task-done/:task_id',
+    isLoggedIn,
+    isGroupLeader,
+    async (req, res) => {
+      try {
+        // Get user ids from req.body
+        const userIds = req.body.userIds
+        // Mark the task as completed for all the users
+        const promises = userIds.map(user_guid =>
+          Promise.resolve(
+            postTaskEntry({
+              user_guid,
+              created_by: req.user.user_guid,
+              task_guid: req.params.task_guid,
+              completion_status: 'COMPLETED',
+            })
+          )
+        )
+
+        await promises.all()
+        res.status(200)
+      } catch (e) {
+        res.status(e.statusCode).send(e.message)
+      }
+    }
+  )
 
   app.use('/', router)
   app.listen(process.env.PORT || 3001, () =>

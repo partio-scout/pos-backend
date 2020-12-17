@@ -86,3 +86,12 @@ export const isLoggedIn = (req, res, next) => {
 
   res.status(401).send('Unauthorized')
 }
+
+export const isGroupLeader = (req, res, next) => {
+  if (req.user) {
+    // TODO: check if the user is a group leader
+    return next()
+  }
+
+  res.status(403).send('Permission denied')
+}
