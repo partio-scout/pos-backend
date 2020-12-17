@@ -240,7 +240,7 @@ const main = async () => {
           )
         )
 
-        await promises.all()
+        await Promise.all(promises)
         res.status(200)
       } catch (e) {
         res.status(e.statusCode).send(e.message)
