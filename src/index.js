@@ -13,7 +13,7 @@ import {
 } from './database'
 import { getProfile } from './profile'
 import { getGroups } from './groups'
-import { configurePassport, isLoggedIn } from './auth'
+import { configurePassport, isLoggedIn, isGroupLeader } from './auth'
 import { getHealth } from './health'
 import session from 'express-session'
 import connectPgSession from 'connect-pg-simple'
@@ -205,7 +205,7 @@ const main = async () => {
       const data = req.body
       data.created_by = req.user.membernumber
 
-      //TODO: do we need to check that this user has right the to approve
+      //TODO: do we need to check that this user has the right to approve
       const id = await postTaskEntry(data)
       res.json(id).status(200)
     } catch (e) {
@@ -221,6 +221,34 @@ const main = async () => {
       res.status(e.statusCode).send(e.message)
     }
   })
+
+  app.post(
+    '/groups/mark-task-done/:task_id',
+    isLoggedIn,
+    isGroupLeader,
+    async (req, res) => {
+      try {
+        // Get user ids from req.body
+        const userIds = req.body.userIds
+        // Mark the task as completed for all the users
+        const promises = userIds.map(user_guid =>
+          Promise.resolve(
+            postTaskEntry({
+              user_guid,
+              created_by: req.user.membernumber,
+              task_guid: req.params.task_id,
+              completion_status: 'COMPLETED',
+            })
+          )
+        )
+
+        const entries = await Promise.all(promises)
+        res.json(entries).status(200)
+      } catch (e) {
+        res.status(e.statusCode).send(e.message)
+      }
+    }
+  )
 
   app.use('/', router)
   app.listen(process.env.PORT || 3001, () =>
