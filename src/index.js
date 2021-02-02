@@ -1,5 +1,4 @@
 import express from 'express'
-import https from 'https'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import passport from 'passport'
@@ -93,14 +92,10 @@ const main = async () => {
     })
   )
 
-  app.get(
-    '/logout',
-    https.get(process.env.LOGOUT_URL, res => {
-      res.on('end', () => {
-        console.log(res)
-      })
-    })
-  )
+  app.get('/logout', function(req, res) {
+    req.logout()
+    res.redirect(clientUrl)
+  })
 
   app.post(
     '/login/callback',
