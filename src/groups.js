@@ -25,15 +25,17 @@ async function getMemberData(groupMembers) {
         }
       )
     })
-  )
+  ).catch(error => {
+    console.log('Failed to get member data: ', error)
+  })
 }
 
 function filterGroups(userNumber, groupsData) {
   return groupsData.filter(groupData => {
-    const groupMember = groupData.members.filter(member => {
+    const groupMember = groupData.members.find(member => {
       return member.memberId == userNumber
     })
-    return groupMember[0].isGroupLeader === true
+    return groupMember ? groupMember.isGroupLeader : false
   })
 }
 
@@ -63,13 +65,19 @@ async function getAllGroups(userNumber) {
         }
       )
     })
-  )
+  ).catch(error => {
+    console.log('Failed to get groupAndMemberData: ', error)
+  })
 
   return groupAndMemberData
 }
 
 export async function getGroups(userNumber) {
-  const allGroups = await getAllGroups(userNumber)
-  const filteredGroups = filterGroups(userNumber, allGroups)
-  return filteredGroups
+  try {
+    const allGroups = await getAllGroups(userNumber)
+    const filteredGroups = filterGroups(userNumber, allGroups)
+    return filteredGroups || []
+  } catch (error) {
+    console.log('Get groups failed with error: ', error)
+  }
 }
