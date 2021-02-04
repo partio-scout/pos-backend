@@ -92,6 +92,11 @@ const main = async () => {
     })
   )
 
+  app.get('/logout', function(req, res) {
+    req.logout()
+    res.redirect(clientUrl)
+  })
+
   app.post(
     '/login/callback',
     passport.authenticate('saml', {
@@ -102,6 +107,13 @@ const main = async () => {
       res.redirect(clientUrl)
     }
   )
+
+  app.post('/logout/callback', async (req, res) => {
+    req.logout()
+    req.clearCache()
+    res.redirect(clientUrl)
+  })
+
   app.get('/user', isLoggedIn, async (req, res) => {
     res.json({
       name: `${req.user.firstname} ${req.user.lastname}`,
