@@ -19,6 +19,8 @@ import session from 'express-session'
 import connectPgSession from 'connect-pg-simple'
 import 'regenerator-runtime/runtime.js'
 
+import notifications from './notifications'
+
 require('dotenv').config()
 const router = express.Router()
 const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000'
@@ -261,6 +263,8 @@ const main = async () => {
       }
     }
   )
+
+  app.use(notifications)
 
   app.use('/', router)
   app.listen(process.env.PORT || 3001, () =>
