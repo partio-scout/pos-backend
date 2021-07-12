@@ -83,8 +83,8 @@ export async function getUserNotifications(user_guid) {
     if (notifications.length < NOTIFICATION_COUNT) {
       const limit = NOTIFICATION_COUNT - notifications.length
       const viewed = await db.any(
-        `SELECT * FROM ${TABLE_NAME} WHERE user_guid = $1 ORDER BY created_at DESC LIMIT $2`,
-        [user_guid.toString(), limit]
+        `SELECT * FROM ${TABLE_NAME} WHERE user_guid = $1 AND viewed = $2 ORDER BY created_at DESC LIMIT $3`,
+        [user_guid.toString(), true, limit]
       )
       const combined = notifications.concat(viewed)
       return combined.sort((notifA, notifB) => {
