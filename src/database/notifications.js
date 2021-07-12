@@ -64,6 +64,8 @@ export async function getNotification(notificationId) {
   }
 }
 
+const NOTIFICATION_COUNT = 5
+
 export async function getUserNotifications(user_guid) {
   try {
     const notifications = await db.any(
@@ -73,9 +75,27 @@ export async function getUserNotifications(user_guid) {
 
     if (!notifications || !notifications.length) {
       return db.any(
-        `SELECT * FROM ${TABLE_NAME} WHERE user_guid = $1 ORDER BY created_at DESC LIMIT 5`,
-        user_guid.toString()
+        `SELECT * FROM ${TABLE_NAME} WHERE user_guid = $1 ORDER BY created_at DESC LIMIT $2`,
+        [user_guid.toString(), NOTIFICATION_COUNT]
       )
+    }
+
+    if (notifications.length < NOTIFICATION_COUNT) {
+      const limit = NOTIFICATION_COUNT - notifications.length
+      const viewed = await db.any(
+        `SELECT * FROM ${TABLE_NAME} WHERE user_guid = $1 ORDER BY created_at DESC LIMIT $2`,
+        [user_guid.toString(), limit]
+      )
+      const combined = notifications.concat(viewed)
+      return combined.sort((notifA, notifB) => {
+        if (notifA.created_at < notifB.created_at) {
+          return 1
+        }
+        if (notifA.created_at > notifB.created_at) {
+          return -1
+        }
+        return 0
+      })
     }
 
     return notifications
