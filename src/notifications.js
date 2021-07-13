@@ -35,7 +35,7 @@ app.post(
     try {
       const notification = await getNotification(req.params.id)
 
-      if (notification && notification.user_guid === req.user.memberId) {
+      if (notification && notification.user_guid === req.user.membernumber) {
         const data = await markNotificationAsViewed(req.params.id)
         return res.json({ success: data }).status(200)
       }
