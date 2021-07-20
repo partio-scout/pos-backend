@@ -30,8 +30,8 @@ export async function createNotification(notification) {
 export async function markNotificationAsViewed(notificationId) {
   try {
     const data = await db.one(
-      `UPDATE ${TABLE_NAME} SET viewed=$1 WHERE id=$2 RETURNING viewed`,
-      [true, notificationId]
+      `UPDATE ${TABLE_NAME} SET viewed=$1, viewed_at=$3 WHERE id=$2 RETURNING viewed`,
+      [true, notificationId, new Date()]
     )
     return data
   } catch (error) {
