@@ -64,7 +64,7 @@ export async function getNotification(notificationId) {
   }
 }
 
-const NOTIFICATION_COUNT = 5
+const NOTIFICATION_COUNT = 200
 
 export async function getUserNotifications(user_guid) {
   try {
@@ -87,15 +87,16 @@ export async function getUserNotifications(user_guid) {
         [user_guid.toString(), true, limit]
       )
       const combined = notifications.concat(viewed)
-      return combined.sort((notifA, notifB) => {
-        if (notifA.created_at < notifB.created_at) {
-          return 1
-        }
-        if (notifA.created_at > notifB.created_at) {
-          return -1
-        }
-        return 0
-      })
+      return combined
+      // return combined.sort((notifA, notifB) => {
+      //   if (notifA.created_at < notifB.created_at) {
+      //     return 1
+      //   }
+      //   if (notifA.created_at > notifB.created_at) {
+      //     return -1
+      //   }
+      //   return 0
+      // })
     }
 
     return notifications
