@@ -1,6 +1,14 @@
 require('dotenv').config()
 import pgPromise from 'pg-promise'
 
+import {
+  createNotification,
+  markNotificationAsViewed,
+  markNotificationsAsViewed,
+  getUserNotifications,
+  getNotification,
+} from './notifications'
+
 const pgp = pgPromise()
 export const db = pgp(process.env.DATABASE_URL)
 
@@ -12,6 +20,19 @@ export async function postTaskEntry(taskEntry) {
       'INSERT INTO task_entries(user_guid, created_by, task_guid, completion_status) VALUES ($1, $2, $3, $4) RETURNING id',
       [user_guid, created_by, task_guid, completion_status]
     )
+
+    if (completion_status === 'COMPLETED') {
+      const notification = await createNotification({
+        itemGuid: task_guid,
+        itemType: 'TASK',
+        notificationType: completion_status,
+        userGuid: user_guid,
+        createdBy: created_by,
+      })
+      if (!notification) {
+        throw new Error('Failed to create a notification.')
+      }
+    }
 
     const entry = await db.one(
       'SELECT task_guid, completion_status FROM task_entries WHERE id = $1',
@@ -108,4 +129,13 @@ export async function getTables() {
       console.log('error', error)
     }
   }
+}
+
+// Notifications
+export {
+  createNotification,
+  markNotificationAsViewed,
+  markNotificationsAsViewed,
+  getUserNotifications,
+  getNotification,
 }
