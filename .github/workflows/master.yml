@@ -30,7 +30,6 @@ jobs:
         run: |
           cp web.config dist/web.config
           cp -r node_modules dist/node_modules
-          cp -r package.json dist/package.json
       - name: 'Deploy to Azure WebApp'
         uses: azure/webapps-deploy@v2
         with:
