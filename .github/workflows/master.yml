@@ -30,6 +30,8 @@ jobs:
         run: |
           cp web.config dist/web.config
           cp -r node_modules dist/node_modules
+      - name: run database migrations
+        run: DATABASE_URL=${{ secrets.DATABASE_URL_STAGING }} yarn migrate-up
       - name: 'Deploy to Azure WebApp'
         uses: azure/webapps-deploy@v2
         with:
