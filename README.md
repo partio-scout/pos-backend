@@ -116,3 +116,20 @@ TODO
 Github Actions is used for CI.
 
 # 7. More useful information
+
+## 7.1 Running migrations manually:
+
+1. Go to azure portal https://portal.azure.com/#home
+2. Select the database of the environment you want to run migrations to (production or staging)
+3. Select "Connection security" from the left menu (under settings)
+4. Add your IP to the allowed IP lists by clicking the "+ Add current client IP address (you.rip.add.ress)" button and the click the save button at the top left of the view
+5. Next go back to the home screen and select the backend of the environment you want to run migrations to
+6. Select Configuration from the menu on the left (under settings)
+7. Copy the value of the DATABASE_URL
+8. Here you have two choices:
+   - 1. In your local dev environment run the following command: `DATABASE_URL=paste-the-value-from-part-7-here yarn migrate-up`
+   - 2. Set the DATABASE_URL from part 7 to your local .env file and run: `yarn migrate-up`
+9. Remove your IP address from the list allowed IP addresses:
+   - Follow steps 1 to 3 of this guide
+   - Click the delete icon to the right of your IP address in the list of IPs
+   - Click save from the top left of the view
