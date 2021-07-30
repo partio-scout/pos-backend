@@ -20,6 +20,7 @@ import connectPgSession from 'connect-pg-simple'
 import 'regenerator-runtime/runtime.js'
 
 import notifications from './notifications'
+import members from './members'
 
 require('dotenv').config()
 const router = express.Router()
@@ -265,6 +266,7 @@ const main = async () => {
   )
 
   app.use(notifications)
+  app.use(members)
 
   app.use('/', router)
   app.listen(process.env.PORT || 3001, () =>
