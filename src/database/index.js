@@ -13,7 +13,13 @@ const pgp = pgPromise()
 export const db = pgp(process.env.DATABASE_URL)
 
 export async function postTaskEntry(taskEntry) {
-  const { user_guid, created_by, task_guid, completion_status } = taskEntry
+  const {
+    user_guid,
+    created_by,
+    task_guid,
+    completion_status,
+    group_leader_name,
+  } = taskEntry
 
   try {
     const data = await db.one(
@@ -28,6 +34,7 @@ export async function postTaskEntry(taskEntry) {
         notificationType: completion_status,
         userGuid: user_guid,
         createdBy: created_by,
+        groupLeaderName: group_leader_name,
       })
       if (!notification) {
         throw new Error('Failed to create a notification.')

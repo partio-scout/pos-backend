@@ -9,11 +9,19 @@ export async function createNotification(notification) {
     notificationType,
     userGuid,
     createdBy,
+    groupLeaderName,
   } = notification
   try {
     const data = await db.one(
-      `INSERT INTO ${TABLE_NAME} (item_guid, item_type, notification_type, user_guid, created_by) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-      [itemGuid, itemType, notificationType, userGuid, createdBy]
+      `INSERT INTO ${TABLE_NAME} (item_guid, item_type, notification_type, user_guid, created_by, group_leader_name) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      [
+        itemGuid,
+        itemType,
+        notificationType,
+        userGuid,
+        createdBy,
+        groupLeaderName,
+      ]
     )
 
     const notification = await db.one(
