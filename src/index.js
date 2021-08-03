@@ -96,7 +96,10 @@ const main = async () => {
 
   app.get('/logout', function(req, res) {
     req.logout()
-    res.redirect(clientUrl)
+    res.redirect(
+      'https://id.partio.fi/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=' +
+        clientUrl
+    )
   })
 
   app.post(
