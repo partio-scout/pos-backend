@@ -12,7 +12,7 @@ const metadataConfig = {
   timeout: 30000,
 }
 
-module.exports.configurePassport = async clientUrl => {
+module.exports.configurePassport = async () => {
   try {
     const reader = await metadata.fetch(metadataConfig)
 
@@ -22,8 +22,6 @@ module.exports.configurePassport = async clientUrl => {
       issuer,
       protocol: 'samlp',
       callbackUrl: process.env.PARTIOID_CALLBACK,
-      logoutCallbackUrl: process.env.PARTIOID_LOGOUT_CALLBACK,
-      logoutUrl: process.env.PARTIOID_LOGOUT_URL + clientUrl,
     })
 
     const samlStrategy = new SamlStrategy(strategyConfig, async function(
