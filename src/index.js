@@ -34,7 +34,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 const main = async () => {
-  await configurePassport()
+  const strategy = await configurePassport(clientUrl)
 
   const pgSession = connectPgSession(session)
   const app = express()
@@ -95,8 +95,10 @@ const main = async () => {
   )
 
   app.get('/logout', function(req, res) {
-    req.logout()
-    res.redirect(clientUrl)
+    return strategy.logout(req, (err, uri) => {
+      req.logout()
+      return res.redirect(uri)
+    })
   })
 
   app.post(
