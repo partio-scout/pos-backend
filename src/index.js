@@ -114,13 +114,11 @@ const main = async () => {
 
   app.post('/logout/callback', async (req, res) => {
     req.logout()
-    req.clearCache()
     res.redirect(clientUrl)
   })
 
   app.get('/logout/callback', async (req, res) => {
     req.logout()
-    req.clearCache()
     res.redirect(clientUrl)
   })
 
