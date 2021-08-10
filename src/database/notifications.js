@@ -116,7 +116,7 @@ export async function getUserNotifications(user_guid) {
 export async function deleteOldNotifications() {
   try {
     const data = await db.any(
-      `DELETE FROM ${TABLE_NAME} WHERE viewed_at < NOW() - INTERVAL '5 days'`,
+      `DELETE FROM ${TABLE_NAME} WHERE viewed_at < NOW() - INTERVAL '30 days'`,
       []
     )
     return data

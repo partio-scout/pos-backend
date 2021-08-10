@@ -21,7 +21,6 @@ import 'regenerator-runtime/runtime.js'
 
 import notifications from './notifications'
 import { deleteOldNotifications } from './database/notifications'
-import cron from 'node-cron'
 
 require('dotenv').config()
 const router = express.Router()
@@ -76,7 +75,7 @@ const main = async () => {
   const cron = require('node-cron')
 
   cron.schedule(
-    '35 16 * * *',
+    '0 0 * * *',
     () => {
       console.log('Delete old notifications')
       deleteOldNotifications()
