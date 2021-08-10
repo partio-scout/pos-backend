@@ -20,6 +20,7 @@ import connectPgSession from 'connect-pg-simple'
 import 'regenerator-runtime/runtime.js'
 
 import notifications from './notifications'
+import { deleteOldNotifications } from './database/notifications'
 
 require('dotenv').config()
 const router = express.Router()
@@ -38,6 +39,13 @@ const main = async () => {
 
   const pgSession = connectPgSession(session)
   const app = express()
+
+  const cron = require('node-cron')
+
+  cron.schedule('0 0 * * *', () => {
+    console.log('delete old notifications')
+    deleteOldNotifications()
+  })
 
   app.use(bodyParser.json())
   app.use(
