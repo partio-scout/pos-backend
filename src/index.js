@@ -76,7 +76,7 @@ const main = async () => {
   const cron = require('node-cron')
 
   cron.schedule(
-    '15 16 * * *',
+    '35 16 * * *',
     () => {
       console.log('Delete old notifications')
       deleteOldNotifications()
