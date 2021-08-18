@@ -24,7 +24,7 @@
     "express": "4.17.1",
     "express-session": "^1.17.0",
     "node-cron": "^3.0.0",
-    "node-pg-migrate": "3.23.3",
+    "node-pg-migrate": "5.10.0",
     "passport": "^0.4.1",
     "passport-saml": "3.1.1",
     "passport-saml-metadata": "2.4.1",
