@@ -11,7 +11,8 @@
     "migrate": "node-pg-migrate",
     "migrate-create": "node-pg-migrate create",
     "migrate-up": "node-pg-migrate up",
-    "migrate-down": "node-pg-migrate down"
+    "migrate-down": "node-pg-migrate down",
+    "prepare": "husky install"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -19,35 +20,30 @@
     "cookie-parser": "^1.4.4",
     "cookie-session": "^1.3.3",
     "cors": "2.8.5",
-    "dotenv": "8.2.0",
+    "dotenv": "10.0.0",
     "express": "4.17.1",
     "express-session": "^1.17.0",
     "node-cron": "^3.0.0",
-    "node-pg-migrate": "3.23.3",
+    "node-pg-migrate": "5.10.0",
     "passport": "^0.4.1",
-    "passport-saml": "2.0.2",
-    "passport-saml-metadata": "2.4.0",
-    "pg": "7.13.0",
-    "pg-promise": "10.2.1",
+    "passport-saml": "3.1.1",
+    "passport-saml-metadata": "2.4.1",
+    "pg": "8.7.1",
+    "pg-promise": "10.11.0",
     "regenerator-runtime": "^0.13.5",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "rimraf": "3.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "7.7.0",
-    "@babel/core": "7.7.2",
-    "@babel/node": "7.7.0",
-    "@babel/preset-env": "7.7.1",
-    "eslint": "6.6.0",
-    "husky": "3.1.0",
-    "nodemon": "2.0.6",
-    "prettier": "1.19.1",
-    "pretty-quick": "2.0.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
+    "@babel/cli": "7.14.8",
+    "@babel/core": "7.15.0",
+    "@babel/node": "7.14.9",
+    "@babel/preset-env": "7.15.0",
+    "eslint": "7.32.0",
+    "husky": "^7.0.0",
+    "nodemon": "2.0.12",
+    "prettier": "2.3.2",
+    "pretty-quick": "3.1.1"
   }
 }
