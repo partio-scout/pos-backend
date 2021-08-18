@@ -29,7 +29,7 @@
     "passport-saml": "3.1.1",
     "passport-saml-metadata": "2.4.1",
     "pg": "8.7.1",
-    "pg-promise": "10.2.1",
+    "pg-promise": "10.11.0",
     "regenerator-runtime": "^0.13.5",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
