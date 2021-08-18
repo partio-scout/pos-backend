@@ -11,7 +11,8 @@
     "migrate": "node-pg-migrate",
     "migrate-create": "node-pg-migrate create",
     "migrate-up": "node-pg-migrate up",
-    "migrate-down": "node-pg-migrate down"
+    "migrate-down": "node-pg-migrate down",
+    "prepare": "husky install"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -40,14 +41,9 @@
     "@babel/node": "7.14.9",
     "@babel/preset-env": "7.15.0",
     "eslint": "7.32.0",
-    "husky": "3.1.0",
+    "husky": "^7.0.0",
     "nodemon": "2.0.12",
     "prettier": "1.19.1",
     "pretty-quick": "2.0.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
   }
 }
