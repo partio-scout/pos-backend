@@ -108,7 +108,7 @@ const main = async () => {
     })
   )
 
-  app.get('/logout', function(req, res) {
+  app.get('/logout', function (req, res) {
     return strategy.logout(req, (err, uri) => {
       req.logout()
       return res.redirect(uri)
@@ -265,7 +265,7 @@ const main = async () => {
         // Get user ids from req.body
         const userIds = req.body.userIds
         // Mark the task as completed for all the users
-        const promises = userIds.map(user_guid =>
+        const promises = userIds.map((user_guid) =>
           Promise.resolve(
             postTaskEntry({
               user_guid,
@@ -287,9 +287,8 @@ const main = async () => {
   app.use(notifications)
 
   app.use('/', router)
-  app.listen(process.env.PORT || 3001, () =>
-    console.log('listening on port 3001')
-  )
+  const port = process.env.PORT || 3001
+  app.listen(port, () => console.log(`listening on port ${port}`))
 }
 
-main().catch(error => console.error(error))
+main().catch((error) => console.error(error))

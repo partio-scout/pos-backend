@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "description": "Partio-ohjelmasovelluksen backend",
   "main": "index.js",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "start": "node dist/index.js",
+    "start:prod": "PORT=8080 node index.js",
     "dev": "nodemon --exec babel-node src/index.js",
     "ngrok": "ngrok http -subdomain=pos-api-dev 3001",
     "build": "rimraf dist && babel src --out-dir dist",
