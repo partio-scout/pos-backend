@@ -1,4 +1,4 @@
-name: Node.js 
+name: Node.js
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  NODE_VERSION: '12.x' # set this to the node version to use
+  NODE_VERSION: '14.x' # set this to the node version to use
 
 jobs:
   build-and-deploy:
@@ -24,5 +24,3 @@ jobs:
           # deploy to Azure Web App.
           yarn install
           yarn build
-
-
