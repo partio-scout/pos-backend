@@ -28,7 +28,10 @@ jobs:
       - name: copy web.config and node_modules to dist
         run: |
           cp web.config dist/web.config
-          cp -r node_modules dist/node_modules
+          cp package.json dist/package.json
+          cp yarn.lock dist/yarn.lock
+          cp .deployment dist/.deployment
+          cp deploy.sh dist/deploy.sh
       - name: 'Deploy to Azure WebApp'
         uses: azure/webapps-deploy@v2
         with:
