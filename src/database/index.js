@@ -23,20 +23,13 @@ export async function postTaskEntry(taskEntry) {
 
   try {
     const old_task_entries = await db.any(
-      'SELECT * FROM task_entries WHERE task_guid = $1',
-      task_guid
+      'SELECT * FROM task_entries WHERE task_guid = $1 AND user_guid = $2',
+      [task_guid, user_guid.toString()]
     )
+
     if (old_task_entries) {
-      await Promise.all(
-        old_task_entries.map(async (entry) => {
-          await archiveTaskEntry(entry)
-          const deletedFromTaskEntries = await db.result(
-            'DELETE FROM task_entries WHERE id = $1',
-            entry.id
-          )
-          return deletedFromTaskEntries
-        })
-      )
+      const deletePromises = old_task_entries.map(archiveTaskEntry)
+      await Promise.all(deletePromises)
     }
     const data = await db.one(
       'INSERT INTO task_entries(user_guid, created_by, task_guid, completion_status) VALUES ($1, $2, $3, $4) RETURNING id',
@@ -64,11 +57,16 @@ export async function postTaskEntry(taskEntry) {
 
     return entry
   } catch (error) {
-    console.log('error', error)
+    console.log('post taskentry - error', error)
   }
 }
 
-export async function archiveTaskEntry(taskEntry) {
+const archiveTaskEntry = async (entry) => {
+  await addTaskEntryToArchive(entry)
+  return await deleteTaskEntry(entry.id)
+}
+
+export async function addTaskEntryToArchive(taskEntry) {
   const { user_guid, created_at, created_by, task_guid, completion_status } =
     taskEntry
 
@@ -84,8 +82,12 @@ export async function archiveTaskEntry(taskEntry) {
     )
     return entry
   } catch (error) {
-    console.log('error', error)
+    console.log('add Taskentry to archive - error', error)
   }
+}
+
+const deleteTaskEntry = (id) => {
+  return db.result('DELETE FROM task_entries WHERE id = $1', id)
 }
 
 export async function getTaskEntries(user_guid) {
