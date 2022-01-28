@@ -10,6 +10,7 @@ import {
   postFavouriteTask,
   getFavouriteTasks,
   deleteFavouriteTask,
+  getTaskGroupEntries,
 } from './database'
 import { getProfile } from './profile'
 import { getGroups } from './groups'
@@ -166,6 +167,23 @@ const main = async () => {
   app.get('/task-entries', isLoggedIn, async (req, res) => {
     try {
       const entries = await getTaskEntries(req.user.membernumber)
+      res.json(entries).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.post('/task-group-entry', isLoggedIn, async (req, res) => {
+    try {
+      console.log(req.body)
+      res.json(id).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+  app.get('/task-group-entries', isLoggedIn, async (req, res) => {
+    try {
+      const entries = await getTaskGroupEntries(req.user.membernumber)
       res.json(entries).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
