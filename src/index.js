@@ -6,11 +6,13 @@ import {
   db,
   postTaskEntry,
   getTaskEntries,
+  postTaskGroupEntry,
   deleteActiveTask,
   postFavouriteTask,
   getFavouriteTasks,
   deleteFavouriteTask,
   getTaskGroupEntries,
+  addTaskEntryToArchive,
 } from './database'
 import { getProfile } from './profile'
 import { getGroups } from './groups'
@@ -173,23 +175,6 @@ const main = async () => {
     }
   })
 
-  app.post('/task-group-entry', isLoggedIn, async (req, res) => {
-    try {
-      console.log(req.body)
-      res.json(id).status(200)
-    } catch (e) {
-      res.status(e.statusCode).send(e.message)
-    }
-  })
-  app.get('/task-group-entries', isLoggedIn, async (req, res) => {
-    try {
-      const entries = await getTaskGroupEntries(req.user.membernumber)
-      res.json(entries).status(200)
-    } catch (e) {
-      res.status(e.statusCode).send(e.message)
-    }
-  })
-
   app.post('/favourite', isLoggedIn, async (req, res) => {
     try {
       const data = req.body
@@ -301,6 +286,41 @@ const main = async () => {
       }
     }
   )
+
+  app.post(
+    '/groups/mark-taskgroup-done/:taskgroup_guid',
+    isLoggedIn,
+    isGroupLeader,
+    async (req, res) => {
+      try {
+        const userIds = req.body.userIds
+        const promises = userIds.map((user_guid) =>
+          Promise.resolve(
+            postTaskGroupEntry({
+              user_guid,
+              created_by: req.user.membernumber,
+              taskgroup_guid: req.params.taskgroup_guid,
+              completed: 'COMPLETED',
+              group_leader_name: req.body.group_leader_name,
+            })
+          )
+        )
+        const entries = await Promise.all(promises)
+        res.json(entries).status(200)
+      } catch (e) {
+        res.status(e.statusCode).send(e.message)
+      }
+    }
+  )
+
+  app.get('/task-group-entries', isLoggedIn, async (req, res) => {
+    try {
+      const entries = await getTaskGroupEntries(req.user.membernumber)
+      res.json(entries).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
 
   app.use(notifications)
 
