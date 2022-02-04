@@ -3,6 +3,7 @@
 exports.shorthands = undefined
 
 exports.up = (pgm) => {
+  pgm.createType('task_group_state', ['COMPLETED'])
   pgm.createTable('task_group_entries', {
     id: 'id',
     user_guid: {
@@ -22,12 +23,13 @@ exports.up = (pgm) => {
       notNull: true,
     },
     completed: {
-      type: 'boolean',
-      default: false,
+      type: 'task_group_state',
+      notNull: true,
     },
   })
 }
 
 exports.down = (pgm) => {
   pgm.dropTable('task_group_entries')
+  pgm.dropType('task_group_state')
 }

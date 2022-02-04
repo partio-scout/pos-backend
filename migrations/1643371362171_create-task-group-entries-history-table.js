@@ -18,11 +18,11 @@ exports.up = (pgm) => {
       notNull: true,
     },
     old_state: {
-      type: 'completion_status',
-      notNull: true,
+      type: 'task_group_state',
+      notNull: false,
     },
     new_state: {
-      type: 'completion_status',
+      type: 'task_group_state',
       notNull: true,
     },
   })
