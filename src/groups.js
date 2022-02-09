@@ -17,6 +17,13 @@ async function getMemberData(groupMembers) {
         acc[task.task_guid] = task.completion_status
         return acc
       }, {})
+      const taskgroupEntries = allMemberTaskGroupEntries.reduce(
+        (acc, taskGroup) => {
+          acc[taskGroup.taskgroup_guid] = taskGroup.completed
+          return acc
+        },
+        {}
+      )
       return Object.assign(
         {},
         {
@@ -25,7 +32,7 @@ async function getMemberData(groupMembers) {
           memberName:
             groupMember.name.firstname + ' ' + groupMember.name.lastname,
           memberTasks: taskEntries,
-          memberTaskGroups: allMemberTaskGroupEntries,
+          memberTaskGroups: taskgroupEntries,
         }
       )
     })
