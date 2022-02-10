@@ -154,7 +154,6 @@ export async function postTaskGroupEntry(taskGroupEntry) {
 
 export async function addTaskGroupEntryToArchive(taskGroupEntry) {
   const { user_guid, taskgroup_guid, completed } = taskGroupEntry
-  console.log('taskGroupEntry ---->', taskGroupEntry)
   try {
     const data = await db.one(
       'INSERT INTO task_group_entries_history(user_guid, taskgroup_guid, old_state, new_state) VALUES ($1, $2, $3, $4 ) RETURNING id',
