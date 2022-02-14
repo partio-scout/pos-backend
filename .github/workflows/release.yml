@@ -6,7 +6,6 @@ env:
   AZURE_WEBAPP_NAME: pos-backend-production # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: 'dist' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.x' # set this to the node version to use
-  DATABASE_URL: ${{ secrets.DATABASE_URL_PRODUCTION }}
 
 jobs:
   build-and-deploy:
@@ -25,7 +24,7 @@ jobs:
           yarn install
           yarn build
       - name: run database migrations
-        run: echo "$env:DATABASE_URL" && DATABASE_URL="$env:DATABASE_URL" yarn migrate-up
+        run: DATABASE_URL=${{ secrets.DATABASE_URL_PRODUCTION }} yarn migrate-up
       - name: copy web.config and node_modules to dist
         run: |
           cp web.config dist/web.config
