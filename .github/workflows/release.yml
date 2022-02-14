@@ -24,7 +24,7 @@ jobs:
           yarn install
           yarn build
       - name: run database migrations
-        run: DATABASE_URL=${{ secrets.DATABASE_URL_PRODUCTION }} yarn migrate-up
+        run: echo ${{ secrets.DATABASE_URL_PRODUCTION }} && DATABASE_URL=${{ secrets.DATABASE_URL_PRODUCTION }} yarn migrate-up
       - name: copy web.config and node_modules to dist
         run: |
           cp web.config dist/web.config
