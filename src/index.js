@@ -23,6 +23,7 @@ import connectPgSession from 'connect-pg-simple'
 import 'regenerator-runtime/runtime.js'
 
 import notifications from './notifications'
+import taskGroups from './taskGroups'
 import { deleteOldNotifications } from './database/notifications'
 
 require('dotenv').config()
@@ -287,42 +288,9 @@ const main = async () => {
     }
   )
 
-  app.post(
-    '/groups/mark-taskgroup-done/:taskgroup_guid',
-    isLoggedIn,
-    isGroupLeader,
-    async (req, res) => {
-      try {
-        const userIds = req.body.userIds
-        const promises = userIds.map((user_guid) =>
-          Promise.resolve(
-            postTaskGroupEntry({
-              user_guid,
-              created_by: req.user.membernumber,
-              taskgroup_guid: req.params.taskgroup_guid,
-              completed: 'COMPLETED',
-              group_leader_name: req.body.group_leader_name,
-            })
-          )
-        )
-        const entries = await Promise.all(promises)
-        res.json(entries).status(200)
-      } catch (e) {
-        res.status(e.statusCode).send(e.message)
-      }
-    }
-  )
-
-  app.get('/task-group-entries', isLoggedIn, async (req, res) => {
-    try {
-      const entries = await getTaskGroupEntries(req.user.membernumber)
-      res.json(entries).status(200)
-    } catch (e) {
-      res.status(e.statusCode).send(e.message)
-    }
-  })
-
   app.use(notifications)
+
+  app.use(taskGroups)
 
   app.use('/', router)
   const port = process.env.PORT || 3001
