@@ -16,17 +16,17 @@ export async function postTaskGroupEntry(taskGroupEntry) {
       [taskgroup_guid, user_guid.toString()]
     )
 
-    if (old_taskgroup_entries.length > 0) {
-      console.log('Already completed')
-      return null
+    if (old_taskgroup_entries) {
+      const archivePromises = old_taskgroup_entries.map(
+        addTaskGroupEntryToArchive
+      )
+      await Promise.all(archivePromises)
     }
 
     const data = await db.one(
       'INSERT INTO task_group_entries(user_guid, created_by, taskgroup_guid, completed) VALUES ($1, $2, $3, $4) RETURNING id',
       [user_guid, created_by, taskgroup_guid, completed]
     )
-
-    await addTaskGroupEntryToArchive(taskGroupEntry)
 
     const notification = await createNotification({
       itemGuid: taskgroup_guid,
