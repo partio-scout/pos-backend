@@ -9,6 +9,8 @@ import {
   getNotification,
 } from './notifications'
 
+import { postTaskGroupEntry, getTaskGroupEntries } from './taskGroups'
+
 const pgp = pgPromise()
 export const db = pgp(process.env.DATABASE_URL)
 
@@ -184,3 +186,6 @@ export {
   getUserNotifications,
   getNotification,
 }
+
+// TaskGroups
+export { postTaskGroupEntry, getTaskGroupEntries }

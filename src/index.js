@@ -6,10 +6,13 @@ import {
   db,
   postTaskEntry,
   getTaskEntries,
+  postTaskGroupEntry,
   deleteActiveTask,
   postFavouriteTask,
   getFavouriteTasks,
   deleteFavouriteTask,
+  getTaskGroupEntries,
+  addTaskEntryToArchive,
 } from './database'
 import { getProfile } from './profile'
 import { getGroups } from './groups'
@@ -20,6 +23,7 @@ import connectPgSession from 'connect-pg-simple'
 import 'regenerator-runtime/runtime.js'
 
 import notifications from './notifications'
+import taskGroups from './taskGroups'
 import { deleteOldNotifications } from './database/notifications'
 
 require('dotenv').config()
@@ -285,6 +289,8 @@ const main = async () => {
   )
 
   app.use(notifications)
+
+  app.use(taskGroups)
 
   app.use('/', router)
   const port = process.env.PORT || 3001
