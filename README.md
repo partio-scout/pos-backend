@@ -1,6 +1,6 @@
 # Partio-ohjelmasovellus backend
 
-# 1. Project purpose
+# 1. Project purpose 
 
 TODO
 
