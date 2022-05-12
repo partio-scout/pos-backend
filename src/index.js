@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import passport from 'passport'
+import * as Sentry from '@sentry/node'
+import * as Tracing from '@sentry/tracing'
 import {
   db,
   postTaskEntry,
@@ -27,6 +29,12 @@ import taskGroups from './taskGroups'
 import { deleteOldNotifications } from './database/notifications'
 
 require('dotenv').config()
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  tracesSampleRate: 1.0,
+})
+
 const router = express.Router()
 const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000'
 
