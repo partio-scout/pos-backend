@@ -11,7 +11,7 @@ app.post(
   isGroupLeader,
   async (req, res) => {
     try {
-      const userIds = req.body.userIds
+      const userIds = req.body
       const promises = userIds.map((user_guid) =>
         Promise.resolve(
           postTaskGroupEntry({

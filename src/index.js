@@ -275,7 +275,7 @@ const main = async () => {
     async (req, res) => {
       try {
         // Get user ids from req.body
-        const userIds = req.body.userIds
+        const userIds = req.body
         // Mark the task as completed for all the users
         const promises = userIds.map((user_guid) =>
           Promise.resolve(
