@@ -11,19 +11,23 @@ app.post(
   isGroupLeader,
   async (req, res) => {
     try {
-      const userIds = req.body
-      const promises = userIds.map((user_guid) =>
-        Promise.resolve(
-          postTaskGroupEntry({
-            user_guid,
-            created_by: req.user.membernumber,
-            taskgroup_guid: req.params.taskgroup_guid,
-            completed: 'COMPLETED',
-            group_leader_name: req.body.group_leader_name,
-          })
+      const userData = req.body
+      const promises = Object.values(userData.groups).map((userIds) => {
+        const promises = userIds.map((user_guid) =>
+          Promise.resolve(
+            postTaskGroupEntry({
+              user_guid: Number(user_guid),
+              created_by: Number(req.user.membernumber),
+              taskgroup_guid: req.params.taskgroup_guid,
+              completed: 'COMPLETED',
+              group_leader_name: userData.group_leader_name,
+            })
+          )
         )
-      )
-      const entries = await Promise.all(promises)
+        return promises
+      })
+      const iterablePromises = [].concat.apply([], promises)
+      const entries = await Promise.all(iterablePromises)
       res.json(entries).status(200)
     } catch (e) {
       res.status(e.statusCode).send(e.message)
