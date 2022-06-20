@@ -79,7 +79,7 @@ async function main() {
     function (activities) {
       const activitiesJson = JSON.parse(activities)
       const ids = activitiesJson.map((activity) => {
-        return activity.id
+        return activity.id.toString()
       })
       return sortArraysAscending(ids)
     }
@@ -89,11 +89,15 @@ async function main() {
     activityidsFromStrapiPromise
   )
 
-  const oldIdsFromKuksa = activityIdsFromStrapi.filter(
-    (x) => !uniqueIdValuesInOrder.includes(x)
+  const oldIdsFromKuksa = uniqueIdValuesInOrder.filter(
+    (x) => !activityIdsFromStrapi.includes(x)
   )
 
-  writeUnusedActivitiesToTxtFile(oldIdsFromKuksa)
+  if (oldIdsFromKuksa.length) {
+    writeUnusedActivitiesToTxtFile(oldIdsFromKuksa)
+  } else {
+    console.log('No old ids')
+  }
 }
 
 main()
