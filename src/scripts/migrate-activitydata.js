@@ -7,7 +7,7 @@ const pgp = require('pg-promise')()
 const db = pgp(process.env.DATABASE_URL)
 
 async function main() {
-  const filePath = path.join(__dirname, './aktiviteetti_ad.csv')
+  const filePath = path.join(__dirname, './aktiviteetti_ac.csv')
   // Read CSV
   let file = fs.readFileSync(filePath, { encoding: 'utf-8' }, function (err) {
     console.log(err)
@@ -42,9 +42,9 @@ async function main() {
     let i = 5000 * pageIndex
     let upperLimit = i + 5000
     return new Promise((resolve, reject) => {
-      if (upperLimit < json.length) {
-        for (i; i < upperLimit; i++) {
-          let entry = json[i]
+      for (i; i < upperLimit; i++) {
+        let entry = json[i]
+        if (entry) {
           data.push({
             user_guid: entry.TAHTahoId,
             created_at: entry.TPALuotu,
@@ -53,11 +53,11 @@ async function main() {
               entry.activities_Partioaktiviteetti_Yhdistä1_aktiviteetti_View_id,
             completion_status: 'COMPLETED',
           })
+        } else {
+          resolve(null)
         }
-        resolve(data)
-      } else {
-        resolve(null)
       }
+      resolve(data)
     })
   }
 
