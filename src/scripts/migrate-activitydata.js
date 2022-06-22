@@ -7,7 +7,7 @@ const pgp = require('pg-promise')()
 const db = pgp(process.env.DATABASE_URL)
 
 async function main() {
-  const filePath = path.join(__dirname, './aktiviteetti_ac.csv')
+  const filePath = path.join(__dirname, './testidata.csv')
   // Read CSV
   let file = fs.readFileSync(filePath, { encoding: 'utf-8' }, function (err) {
     console.log(err)
@@ -39,25 +39,29 @@ async function main() {
   function getNextData(t, pageIndex) {
     let data = null
     data = []
-    let i = 5000 * pageIndex
-    let upperLimit = i + 5000
+    let lowerLimit = 5000 * pageIndex
+    let upperLimit = lowerLimit + 5000
+    if (upperLimit > json.length) {
+      upperLimit = json.length
+    }
+
     return new Promise((resolve, reject) => {
-      for (i; i < upperLimit; i++) {
-        let entry = json[i]
-        if (entry) {
-          data.push({
-            user_guid: entry.TAHTahoId,
-            created_at: entry.TPALuotu,
-            created_by: entry.TPALuoja,
-            task_guid:
-              entry.activities_Partioaktiviteetti_Yhdistä1_aktiviteetti_View_id,
-            completion_status: 'COMPLETED',
-          })
-        } else {
-          resolve(null)
-        }
+      for (lowerLimit; lowerLimit < upperLimit; lowerLimit++) {
+        let entry = json[lowerLimit]
+        data.push({
+          user_guid: entry.TAHTahoId,
+          created_at: entry.TPALuotu,
+          created_by: entry.TPALuoja,
+          task_guid:
+            entry.activities_Partioaktiviteetti_Yhdistä1_aktiviteetti_View_id,
+          completion_status: 'COMPLETED',
+        })
       }
-      resolve(data)
+      if (data.length === 0) {
+        resolve(undefined)
+      } else {
+        resolve(data)
+      }
     })
   }
 
