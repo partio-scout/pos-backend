@@ -1,13 +1,16 @@
 const fs = require('fs')
-const { resolve } = require('path')
 var path = require('path')
 require('dotenv').config()
 const pgp = require('pg-promise')()
 
 const db = pgp(process.env.DATABASE_URL)
 
+// Give csv-file as an argument for script
+const appArgs = process.argv.slice(2)
+const fileName = appArgs[0]
+
 async function main() {
-  const filePath = path.join(__dirname, './testidata.csv')
+  const filePath = path.join(__dirname, fileName)
   // Read CSV
   let file = fs.readFileSync(filePath, { encoding: 'utf-8' }, function (err) {
     console.log(err)
