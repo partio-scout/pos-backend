@@ -104,7 +104,7 @@ NOTE 2: If you've already created and added the root key and root certificate du
    - Now the certificates are ready so all you need to do is move the `server.crt` and `server.key` files inside the `backend` folder to the backend project
      - Create a `certs` folder inside the backend project
      - Move the `server.crt` and `server.key` inside the `certs` folder
-   - Run `yarn dev` to start the app and navigate to https://partio.ngrok.io:3000
+   - Run `yarn dev` to start the app
 
 ## 3.4. Version control
 
