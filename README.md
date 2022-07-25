@@ -54,6 +54,7 @@ NOTE 2: If you've already created and added the root key and root certificate du
    - If you created the folder in finder open a terminal and `cd` to the folder
    - Next run the following commands to create the required files for generating the certificates
      - Create a root key: `openssl genrsa -des3 -out rootCA.key 2048`
+     - Create RootCA.key pass phrase when terminal asks for it and save it somewhere (You're going to need it later)
      - Create a root certificate: `openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.pem`
        - It's enough to only fill some fields here. E.g. Country as `fi` and location as `Helsinki`
    - Next you need to add the created root certificate as trusted in your Keychain Access application
@@ -96,6 +97,9 @@ NOTE 2: If you've already created and added the root key and root certificate du
    - Now the certificates are ready so all you need to do is move the `server.crt` and `server.key` files inside the `backend` folder to the backend project
      - Create a `certs` folder inside the backend project
      - Move the `server.crt` and `server.key` inside the `certs` folder
+
+3. For using localhost https environment, you need to edit `~/.ngrok2/ngrok.yml`.
+   - `addr: 3001` should be changed to `addr: https://localhost:3001`
    - Run `yarn dev` to start the app
 
 ## 3.4. Version control
