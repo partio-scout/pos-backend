@@ -72,16 +72,12 @@ NOTE 2: If you've already created and added the root key and root certificate du
         prompt = no
        default_md = sha256
        distinguished_name = dn
+
+       [dn]
+       C=fi
+       L=Helsinki
+       CN = pos-api-dev.ngrok.io
        ```
-
-     [dn]
-     C=fi
-     L=Helsinki
-     CN = pos-api-dev.ngrok.io
-
-     ```
-
-     ```
 
    - Create a `v3.ext` file inside the `backend` folder with the following information
 
@@ -90,14 +86,10 @@ NOTE 2: If you've already created and added the root key and root certificate du
        basicConstraints=CA:FALSE
        keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
        subjectAltName = @alt_names
+
+       [alt_names]
+       DNS.1 = pos-api-dev.ngrok.io
        ```
-
-     [alt_names]
-     DNS.1 = pos-api-dev.ngrok.io
-
-     ```
-
-     ```
 
    - Run `openssl req -new -sha256 -nodes -out server.csr -newkey rsa:2048 -keyout server.key -config <( cat backend/server.csr.cnf )`
    - Run `openssl x509 -req -in backend/server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 500 -sha256 -extfile backend/v3.ext`
