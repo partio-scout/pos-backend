@@ -22,14 +22,13 @@ export async function postTaskEntry(taskEntry) {
     completion_status,
     group_leader_name,
   } = taskEntry
-
   try {
     const old_task_entries = await db.any(
       'SELECT * FROM task_entries WHERE task_guid = $1 AND user_guid = $2',
       [task_guid, user_guid.toString()]
     )
 
-    if (old_task_entries) {
+    if (old_task_entries?.length) {
       const deletePromises = old_task_entries.map(archiveTaskEntry)
       await Promise.all(deletePromises)
     }
