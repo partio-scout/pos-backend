@@ -297,7 +297,6 @@ const main = async () => {
           res.json(entries).status(200)
         }
       } catch (e) {
-        console.log('error täällä näi')
         res.status(e.statusCode).send(e.message)
       }
     }
