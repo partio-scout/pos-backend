@@ -278,23 +278,26 @@ const main = async () => {
     isGroupLeader,
     async (req, res) => {
       try {
-        // Get user ids from req.body
-        const userIds = req.body
+        // Get membergroup object from req.body
+        const memberGroup = req.body
+        // iterate through membergroups and user ids
         // Mark the task as completed for all the users
-        const promises = userIds.map((user_guid) =>
-          Promise.resolve(
-            postTaskEntry({
-              user_guid,
-              created_by: req.user.membernumber,
-              task_guid: req.params.task_id,
-              completion_status: 'COMPLETED',
-            })
+        for (let userIds of Object.values(memberGroup)) {
+          const promises = userIds.map((user_guid) =>
+            Promise.resolve(
+              postTaskEntry({
+                user_guid,
+                created_by: req.user.membernumber,
+                task_guid: req.params.task_id,
+                completion_status: 'COMPLETED',
+              })
+            )
           )
-        )
-
-        const entries = await Promise.all(promises)
-        res.json(entries).status(200)
+          const entries = await Promise.all(promises)
+          res.json(entries).status(200)
+        }
       } catch (e) {
+        console.log('error täällä näi')
         res.status(e.statusCode).send(e.message)
       }
     }
