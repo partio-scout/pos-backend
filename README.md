@@ -21,7 +21,7 @@ You can create needed tables by running `yarn migrate-up`.
 
 Install ngrok, it is preferred to use Homebrew `brew cask install ngrok`.
 Get content for ngrok-config from LastPass and place it to `~/.ngrok2/ngrok.yml`. Also edit your `/etc/hosts` and add `partio.ngrok.io` as a hostname for 127.0.0.1
-Start ngrok with `ngrok start partio`.
+Start ngrok with `yarn ngrok` or alternatively `ngrok start partio`.
 
 ### Environmental variables
 
@@ -102,7 +102,7 @@ NOTE 2: If you've already created and added the root key and root certificate du
 
    - `addr: 3001` should be changed to `addr: https://localhost:3001`
 
-4. Run ngrok with `npm run ngrok` to start ngrok
+4. Run ngrok with `yarn ngrok`
 
 5. Run `yarn dev` to start the app
 

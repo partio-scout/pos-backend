@@ -2,7 +2,7 @@ import { db } from './index'
 
 const TABLE_NAME = 'notifications'
 
-export async function createNotification(notification) {
+export async function createNotification(notificationData) {
   const {
     itemGuid,
     itemType,
@@ -10,28 +10,42 @@ export async function createNotification(notification) {
     userGuid,
     createdBy,
     groupLeaderName,
-  } = notification
+  } = notificationData
   try {
-    const data = await db.one(
-      `INSERT INTO ${TABLE_NAME} (item_guid, item_type, notification_type, user_guid, created_by, group_leader_name) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-      [
-        itemGuid,
-        itemType,
-        notificationType,
-        userGuid,
-        createdBy,
-        groupLeaderName,
-      ]
-    )
+    // Check if the notification already exists and return it if it does
+    const notificationQuery = `SELECT * FROM ${TABLE_NAME} WHERE item_guid = $1 AND notification_type = $2 AND user_guid = $3`
+    const notificationParams = [
+      itemGuid.toString(),
+      notificationType,
+      userGuid.toString(),
+    ]
+    let notification = await db.oneOrNone(notificationQuery, notificationParams)
 
-    const notification = await db.one(
-      `SELECT * FROM ${TABLE_NAME} WHERE id = $1`,
-      data.id
-    )
+    if (!notification) {
+      // The notification doesn't exist so we create it
+      const data = await db.one(
+        `INSERT INTO ${TABLE_NAME} (item_guid, item_type, notification_type, user_guid, created_by, group_leader_name) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+        [
+          itemGuid,
+          itemType,
+          notificationType,
+          userGuid,
+          createdBy,
+          groupLeaderName,
+        ]
+      )
 
+      // Fetch the created notification
+      notification = await db.one(
+        `SELECT * FROM ${TABLE_NAME} WHERE id = $1`,
+        data.id
+      )
+    }
+
+    // Return the notification
     return notification
   } catch (error) {
-    console.log('error', error)
+    console.log('Error in notification creation: ', error)
   }
 }
 

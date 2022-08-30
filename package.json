@@ -10,7 +10,7 @@
     "start": "node dist/index.js",
     "start:prod": "PORT=8080 node index.js",
     "dev": "nodemon --exec babel-node src/index.js",
-    "ngrok": "ngrok http --subdomain=pos-api-dev 3001",
+    "ngrok": "ngrok start partio",
     "build": "rimraf dist && babel src --out-dir dist",
     "migrate": "node-pg-migrate",
     "migrate-create": "node-pg-migrate create",

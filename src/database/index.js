@@ -23,20 +23,30 @@ export async function postTaskEntry(taskEntry) {
     group_leader_name,
   } = taskEntry
   try {
+    // Get all existing entries for given task and user
     const old_task_entries = await db.any(
       'SELECT * FROM task_entries WHERE task_guid = $1 AND user_guid = $2',
       [task_guid, user_guid.toString()]
     )
 
+    // Move the existing entries to the history table (AKA archive)
     if (old_task_entries?.length) {
       const deletePromises = old_task_entries.map(archiveTaskEntry)
       await Promise.all(deletePromises)
     }
+
+    // Create an entry for the state change
     const data = await db.one(
       'INSERT INTO task_entries(user_guid, created_by, task_guid, completion_status) VALUES ($1, $2, $3, $4) RETURNING id',
       [user_guid, created_by, task_guid, completion_status]
     )
 
+    const entry = await db.one(
+      'SELECT task_guid, completion_status FROM task_entries WHERE id = $1',
+      data.id
+    )
+
+    // Create a notification for the state change if the new state is completed
     if (completion_status === 'COMPLETED') {
       const notification = await createNotification({
         itemGuid: task_guid,
@@ -51,14 +61,9 @@ export async function postTaskEntry(taskEntry) {
       }
     }
 
-    const entry = await db.one(
-      'SELECT task_guid, completion_status FROM task_entries WHERE id = $1',
-      data.id
-    )
-
     return entry
   } catch (error) {
-    console.log('post taskentry - error', error)
+    console.error('post taskentry - error: ', error)
   }
 }
 
