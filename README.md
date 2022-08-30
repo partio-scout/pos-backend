@@ -98,9 +98,13 @@ NOTE 2: If you've already created and added the root key and root certificate du
      - Create a `certs` folder inside the backend project
      - Move the `server.crt` and `server.key` inside the `certs` folder
 
-3. For using localhost https environment, you need to edit `~/.ngrok2/ngrok.yml`.
+3. Edit `~/.ngrok2/ngrok.yml`
+
    - `addr: 3001` should be changed to `addr: https://localhost:3001`
-   - Run `yarn dev` to start the app
+
+4. Run ngrok with `npm run ngrok` to start ngrok
+
+5. Run `yarn dev` to start the app
 
 ## 3.4. Version control
 
