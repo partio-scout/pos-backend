@@ -3,18 +3,14 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import passport from 'passport'
 import * as Sentry from '@sentry/node'
-import * as Tracing from '@sentry/tracing'
 import {
   db,
   postTaskEntry,
   getTaskEntries,
-  postTaskGroupEntry,
   deleteActiveTask,
   postFavouriteTask,
   getFavouriteTasks,
   deleteFavouriteTask,
-  getTaskGroupEntries,
-  addTaskEntryToArchive,
 } from './database'
 import { getProfile } from './profile'
 import { getGroups } from './groups'
@@ -27,6 +23,8 @@ import 'regenerator-runtime/runtime.js'
 import notifications from './notifications'
 import taskGroups from './taskGroups'
 import { deleteOldNotifications } from './database/notifications'
+import https from 'https'
+import fs from 'fs'
 
 require('dotenv').config()
 
@@ -41,7 +39,12 @@ const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000'
 const cookieConfig = {
   maxAge: 24 * 60 * 60 * 1000,
 }
-if (process.env.NODE_ENV !== 'development') {
+
+if (
+  process.env.NODE_ENV !== 'development' ||
+  process.env.LOCALHOST_WITH_HTTPS === 'enabled'
+) {
+  console.log('COOKIE CONFIG')
   cookieConfig.sameSite = 'none'
   cookieConfig.secure = true
 }
@@ -58,6 +61,7 @@ const main = async () => {
       extended: true,
     })
   )
+
   app.set('trust proxy', 1)
   app.use(
     session({
@@ -274,22 +278,24 @@ const main = async () => {
     isGroupLeader,
     async (req, res) => {
       try {
-        // Get user ids from req.body
-        const userIds = req.body
+        // Get membergroup object from req.body
+        const memberGroup = req.body
+        // iterate through membergroups and user ids
         // Mark the task as completed for all the users
-        const promises = userIds.map((user_guid) =>
-          Promise.resolve(
-            postTaskEntry({
-              user_guid,
-              created_by: req.user.membernumber,
-              task_guid: req.params.task_id,
-              completion_status: 'COMPLETED',
-            })
+        for (let userIds of Object.values(memberGroup)) {
+          const promises = userIds.map((user_guid) =>
+            Promise.resolve(
+              postTaskEntry({
+                user_guid,
+                created_by: req.user.membernumber,
+                task_guid: req.params.task_id,
+                completion_status: 'COMPLETED',
+              })
+            )
           )
-        )
-
-        const entries = await Promise.all(promises)
-        res.json(entries).status(200)
+          const entries = await Promise.all(promises)
+          res.json(entries).status(200)
+        }
       } catch (e) {
         res.status(e.statusCode).send(e.message)
       }
@@ -302,7 +308,18 @@ const main = async () => {
 
   app.use('/', router)
   const port = process.env.PORT || 3001
-  app.listen(port, () => console.log(`listening on port ${port}`))
+  if (
+    process.env.NODE_ENV !== 'development' ||
+    process.env.LOCALHOST_WITH_HTTPS !== 'enabled'
+  ) {
+    app.listen(port, () => console.log(`listening on port ${port}`))
+  } else {
+    const key = fs.readFileSync('certs/server.key', 'utf-8')
+    const cert = fs.readFileSync('certs/server.crt', 'utf-8')
+
+    https.createServer({ key, cert }, app).listen(port)
+    console.log(`HTTPS localhost listening on port ${port}`)
+  }
 }
 
 main().catch((error) => console.error(error))

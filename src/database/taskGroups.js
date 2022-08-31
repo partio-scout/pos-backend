@@ -11,11 +11,13 @@ export async function postTaskGroupEntry(taskGroupEntry) {
   } = taskGroupEntry
 
   try {
+    // Get any existing entries for the given task group and user
     const old_taskgroup_entries = await db.any(
       'SELECT * FROM task_group_entries WHERE taskgroup_guid = $1 AND user_guid = $2',
       [taskgroup_guid, user_guid.toString()]
     )
 
+    // Move the existing entries to the history table (AKA archive)
     if (old_taskgroup_entries) {
       const archivePromises = old_taskgroup_entries.map(
         addTaskGroupEntryToArchive
@@ -23,11 +25,18 @@ export async function postTaskGroupEntry(taskGroupEntry) {
       await Promise.all(archivePromises)
     }
 
+    // Create an entry for the task group entry state change
     const data = await db.one(
       'INSERT INTO task_group_entries(user_guid, created_by, taskgroup_guid, completed) VALUES ($1, $2, $3, $4) RETURNING id',
       [user_guid, created_by, taskgroup_guid, completed]
     )
 
+    const entry = await db.one(
+      'SELECT taskgroup_guid, completed FROM task_group_entries WHERE id = $1',
+      data.id
+    )
+
+    // Create a notification about the state change
     const notification = await createNotification({
       itemGuid: taskgroup_guid,
       itemType: 'TASK_GROUP',
@@ -40,14 +49,9 @@ export async function postTaskGroupEntry(taskGroupEntry) {
       throw new Error('Failed to create a notification.')
     }
 
-    const entry = await db.one(
-      'SELECT taskgroup_guid, completed FROM task_group_entries WHERE id = $1',
-      data.id
-    )
-
     return entry
   } catch (error) {
-    console.log('post taskgroup entry - error', error)
+    console.error('post taskgroup entry - error: ', error)
   }
 }
 

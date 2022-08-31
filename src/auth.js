@@ -12,7 +12,7 @@ const metadataConfig = {
   timeout: 30000,
 }
 
-module.exports.configurePassport = async clientUrl => {
+module.exports.configurePassport = async (clientUrl) => {
   try {
     const reader = await metadata.fetch(metadataConfig)
 
@@ -23,10 +23,13 @@ module.exports.configurePassport = async clientUrl => {
       protocol: 'samlp',
       callbackUrl: process.env.PARTIOID_CALLBACK,
       logoutCallbackUrl: process.env.PARTIOID_LOGOUT_CALLBACK,
+      // FIXME: Does not work in development environment
+      // Because the clientUrl is not configured to partio id as an allowed client logout throws an error
+      // Might work if we set the staging env app url here instead of the localhost clientUrl?
       logoutUrl: process.env.PARTIOID_LOGOUT_URL + clientUrl,
     })
 
-    const samlStrategy = new SamlStrategy(strategyConfig, async function(
+    const samlStrategy = new SamlStrategy(strategyConfig, async function (
       profile,
       done
     ) {
