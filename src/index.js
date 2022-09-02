@@ -282,7 +282,7 @@ const main = async () => {
         const memberGroup = req.body
         // iterate through membergroups and user ids
         // Mark the task as completed for all the users
-        for (let userIds of Object.values(memberGroup)) {
+        const promises = Object.values(memberGroup).map((userIds) => {
           const promises = userIds.map((user_guid) =>
             Promise.resolve(
               postTaskEntry({
@@ -293,9 +293,11 @@ const main = async () => {
               })
             )
           )
-          const entries = await Promise.all(promises)
-          res.json(entries).status(200)
-        }
+          return promises
+        })
+        const iterablePromises = [].concat.apply([], promises)
+        const entries = await Promise.all(iterablePromises)
+        res.json(entries).status(200)
       } catch (e) {
         res.status(e.statusCode).send(e.message)
       }
