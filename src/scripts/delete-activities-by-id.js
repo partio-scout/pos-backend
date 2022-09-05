@@ -4,6 +4,7 @@ require('dotenv').config()
 const pgp = require('pg-promise')()
 
 const db = pgp(process.env.DATABASE_URL)
+const unusedActivities = require('./get-unused-activities')
 
 async function deleteTaskEntriesById(task_guid) {
   try {
@@ -20,7 +21,9 @@ async function deleteTaskEntriesById(task_guid) {
 }
 
 async function main() {
-  oldIds.forEach((task_guid) => {
+  const oldIds = unusedActivities.main()
+  const resolvedIds = await oldIds
+  resolvedIds.forEach((task_guid) => {
     try {
       return deleteTaskEntriesById(task_guid)
     } catch (error) {

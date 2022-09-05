@@ -43,7 +43,8 @@ function writeUnusedActivitiesToTxtFile(ids) {
 }
 
 async function main() {
-  const filePath = path.join(__dirname, './testidata-kompassi.csv')
+  // Change filename below to match the csv-file with migration activities
+  const filePath = path.join(__dirname, './aktiviteetti_aa.csv')
   // Read CSV
   let file = fs.readFileSync(filePath, { encoding: 'utf-8' }, function (err) {
     console.log(err)
@@ -95,10 +96,11 @@ async function main() {
 
   if (oldIdsFromKuksa.length) {
     writeUnusedActivitiesToTxtFile(oldIdsFromKuksa)
+    return oldIdsFromKuksa
   } else {
     console.log('No old ids')
   }
-  return result
 }
 
 main()
+module.exports = { main }
