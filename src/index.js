@@ -294,7 +294,8 @@ const main = async () => {
             )
           )
         )
-        const entries = await Promise.all(promises)
+        const flattedPromises = promises.flat()
+        const entries = await Promise.all(flattedPromises)
         res.json(entries).status(200)
       } catch (e) {
         res.status(e.statusCode).send(e.message)
