@@ -3,7 +3,7 @@ var path = require('path')
 require('dotenv').config()
 const pgp = require('pg-promise')()
 
-const db = pgp('postgres://postgres:postgres@localhost:5432/pos')
+const db = pgp(process.env.DATABASE_URL)
 
 // Give csv-file as an argument for script
 const appArgs = process.argv.slice(2)

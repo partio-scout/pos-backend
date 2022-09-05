@@ -3,7 +3,7 @@ const fs = require('fs')
 var path = require('path')
 var request = require('request-promise')
 
-const DBURL = 'https://pof-backend-testing.azurewebsites.net'
+const DBURL = process.env.POF_BACKEND_STAGING
 async function fetchActivitiesFromStrapi() {
   try {
     const countRes = await request(`${DBURL}/activities/count?_locale=fi`)
@@ -60,7 +60,7 @@ async function main() {
     // Loop through each row
     tmp = {}
     row = row.split(',')
-    for (var i = 0; i < headers.length; i++) {
+    for (let i = 0; i < headers.length; i++) {
       tmp[headers[i]] = row[i]
     }
     // Add object to list
@@ -98,6 +98,7 @@ async function main() {
   } else {
     console.log('No old ids')
   }
+  return result
 }
 
 main()
