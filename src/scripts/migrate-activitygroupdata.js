@@ -35,8 +35,6 @@ async function main() {
     // Add object to list
     json.push(rowJson)
   })
-  // const jee = json[0].TMELuoja.split(' ')
-  // console.log(jee[1])
 
   const cs = new pgp.helpers.ColumnSet(
     ['user_guid', 'created_at', 'created_by', 'taskgroup_guid', 'completed'],
@@ -55,14 +53,18 @@ async function main() {
     return new Promise((resolve, reject) => {
       for (lowerLimit; lowerLimit < upperLimit; lowerLimit++) {
         let entry = json[lowerLimit]
-        // console.log(entry.TMELuoja.split(' ')[1])
-        if (entry.TMELuoja === undefined) {
+        if (!entry.TMELuoja) {
           console.log(entry)
         }
+        const [date, time] = entry.TMELuotu.split(' ')
+        const [day, month, year] = date.split('.')
+        const [hours, minutes] = time.split(':')
+        const createdAtDate = new Date(year, month - 1, day, hours, minutes)
+        const createdBy = entry.TMELuoja.split(' ')[1]
         data.push({
           user_guid: entry.TAHTahoId,
-          created_at: new Date(),
-          created_by: entry.TMELuoja.split(' ')[1] || '9933594',
+          created_at: createdAtDate,
+          created_by: createdBy,
           taskgroup_guid: entry.activity_group,
           completed: 'COMPLETED',
         })
