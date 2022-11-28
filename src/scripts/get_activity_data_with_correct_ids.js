@@ -1,20 +1,34 @@
-// Run script with command: node get_activity_data_with_correct_ids.js FILEPATH
+// Run script with command: node get_activity_data_with_correct_ids.js FILEPATH activity/activitygroup
 
 require('dotenv').config({ path: '../../.env' })
 const fs = require('fs')
 var path = require('path')
 var request = require('request-promise')
 
-const appArgs = process.argv.slice(2)
-const fileName = appArgs[0]
-// const DBURL = process.env.POF_BACKEND_STAGING
+const appArgs2 = process.argv.slice(2)
+const fileName = appArgs2[0]
+
+const appArgs3 = process.argv.slice(3)
+const dataType = appArgs3[0]
+
 const DBURL = process.env.POF_BACKEND_PRODUCTION
+
+var strapiUrl = ''
+var idColumnName = ''
+
+if (dataType == 'activity') {
+  strapiUrl = 'activities'
+  idColumnName = 'task_guid'
+} else {
+  strapiUrl = 'activity-groups'
+  idColumnName = 'taskgroup_guid'
+}
 
 // Fetch all activities from POF
 async function fetchActivitiesFromStrapi() {
   try {
-    const countRes = await request(`${DBURL}/activities/count?_locale=fi`)
-    const activities = await request(`${DBURL}/activities?_limit=${countRes}`)
+    const countRes = await request(`${DBURL}/${strapiUrl}/count?_locale=fi`)
+    const activities = await request(`${DBURL}/${strapiUrl}?_limit=${countRes}`)
     return activities
   } catch (e) {
     console.log(`Error getting activities: ${e}`)
@@ -58,12 +72,12 @@ async function main() {
     }
 
     // Finf all wp_guid id's
-    if (rowJson.task_guid.length > 7) {
-      rowJson.task_guid
+    if (rowJson[idColumnName].length > 7) {
+      rowJson[idColumnName]
       for (var i = 0; i < activitiesJsonStrapio.length; i++) {
         // Compare POF activity wp_guid to csv file task_guid id and if it is the same, replace task_guid with the correct id from POF
-        if (activitiesJsonStrapio[i].wp_guid == rowJson.task_guid) {
-          rowJson.task_guid = activitiesJsonStrapio[i].id
+        if (activitiesJsonStrapio[i].wp_guid == rowJson[idColumnName]) {
+          rowJson[idColumnName] = activitiesJsonStrapio[i].id
         }
       }
     }
@@ -89,7 +103,7 @@ function convertJsonToCsv(json) {
   csv.unshift(fields.join(','))
   csv = csv.join('\r\n')
 
-  fs.writeFile('activity_data_11_22.csv', csv, (err) => {
+  fs.writeFile(`${strapiUrl}_data_281122.csv`, csv, (err) => {
     if (err) console.error(err)
     else console.log('New csv file created!')
   })
