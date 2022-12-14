@@ -25,6 +25,7 @@ import taskGroups from './taskGroups'
 import { deleteOldNotifications } from './database/notifications'
 import https from 'https'
 import fs from 'fs'
+import { postAgegroupEntry } from './database/ageGroups'
 
 require('dotenv').config()
 
@@ -158,6 +159,36 @@ const main = async () => {
       canMarkDone: req.user.canMarkDone,
     })
   })
+
+  app.post(
+    '/groups/mark-agegroup-done/:agegroup_guid',
+    isLoggedIn,
+    isGroupLeader,
+    async (req, res) => {
+      try {
+        const userData = req.body
+        const promises = Object.values(userData.groups).map((userIds) => {
+          const promises = userIds.map((user_guid) =>
+            Promise.resolve(
+              postTaskGroupEntry({
+                user_guid: Number(user_guid),
+                created_by: Number(req.user.membernumber),
+                agegroup_guid: req.params.agegroup_guid,
+                completion_status: 'COMPLETED',
+                group_leader_name: userData.group_leader_name,
+              })
+            )
+          )
+          return promises
+        })
+        const iterablePromises = [].concat.apply([], promises)
+        const entries = await Promise.all(iterablePromises)
+        res.json(entries).status(200)
+      } catch (e) {
+        res.status(e.statusCode).send(e.message)
+      }
+    }
+  )
 
   app.post('/task-entry', isLoggedIn, async (req, res) => {
     try {
