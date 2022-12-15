@@ -35,3 +35,15 @@ export async function postAgegroupEntry(ageGroupEntry) {
     console.error('post agegroup entry - error: ', error)
   }
 }
+
+export async function getAgeGroupEntries(user_guid) {
+  try {
+    const data = await db.any(
+      'SELECT agegroup_guid, completion_status FROM completed_agegroup_entries WHERE user_guid = $1 ORDER BY created_at ASC',
+      user_guid.toString()
+    )
+    return data
+  } catch (error) {
+    console.log('error', error)
+  }
+}

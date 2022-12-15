@@ -25,7 +25,7 @@ import taskGroups from './taskGroups'
 import { deleteOldNotifications } from './database/notifications'
 import https from 'https'
 import fs from 'fs'
-import { postAgegroupEntry } from './database/ageGroups'
+import { postAgegroupEntry, getAgeGroupEntries } from './database/ageGroups'
 
 require('dotenv').config()
 
@@ -189,6 +189,15 @@ const main = async () => {
       }
     }
   )
+
+  app.get('/agegroup-entries', isLoggedIn, async (req, res) => {
+    try {
+      const entries = await getAgeGroupEntries(req.user.membernumber)
+      res.json(entries).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
 
   app.post('/task-entry', isLoggedIn, async (req, res) => {
     try {
