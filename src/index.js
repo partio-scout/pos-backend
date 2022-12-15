@@ -170,11 +170,11 @@ const main = async () => {
         const promises = Object.values(userData.groups).map((userIds) => {
           const promises = userIds.map((user_guid) =>
             Promise.resolve(
-              postTaskGroupEntry({
+              postAgegroupEntry({
                 user_guid: Number(user_guid),
                 created_by: Number(req.user.membernumber),
                 agegroup_guid: req.params.agegroup_guid,
-                completion_status: 'COMPLETED',
+                completed: 'COMPLETED',
                 group_leader_name: userData.group_leader_name,
               })
             )
