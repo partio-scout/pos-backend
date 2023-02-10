@@ -36,6 +36,29 @@ export async function postAgegroupEntry(ageGroupEntry) {
   }
 }
 
+export async function deleteAgeGroupEntry(ageGroupEntry) {
+  const { user_guid, created_by, agegroup_guid, completed, group_leader_name } =
+    ageGroupEntry
+  try {
+    // Create a notification about the state change
+    const notification = await createNotification({
+      itemGuid: agegroup_guid,
+      itemType: 'AGE_GROUP',
+      notificationType: completed,
+      userGuid: user_guid,
+      createdBy: created_by,
+      groupLeaderName: group_leader_name,
+    })
+    if (!notification) {
+      throw new Error('Failed to create a notification.')
+    }
+
+    return db.result('DELETE FROM completed_agegroup_entries WHERE id = $1', id)
+  } catch (error) {
+    console.error('Remove agegroup entry - error: ', error)
+  }
+}
+
 export async function getAgeGroupEntries(user_guid) {
   try {
     const data = await db.any(
