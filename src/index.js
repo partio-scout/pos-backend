@@ -25,7 +25,11 @@ import taskGroups from './taskGroups'
 import { deleteOldNotifications } from './database/notifications'
 import https from 'https'
 import fs from 'fs'
-import { postAgegroupEntry, getAgeGroupEntries } from './database/ageGroups'
+import {
+  postAgegroupEntry,
+  getAgeGroupEntries,
+  deleteAgeGroupEntry,
+} from './database/ageGroups'
 
 require('dotenv').config()
 
@@ -198,6 +202,22 @@ const main = async () => {
       res.status(e.statusCode).send(e.message)
     }
   })
+
+  app.delete(
+    '/groups/delete-agegroup-entry/:agegroup_guid',
+    isLoggedIn,
+    async (req, res) => {
+      try {
+        const data = req.body
+        data.user_guid = req.user.membernumber
+        data.task_guid = req.params.agegroup_guid
+        const id = await deleteAgeGroupEntry(data)
+        res.json(id).status(200)
+      } catch (e) {
+        res.status(e.statusCode).send(e.message)
+      }
+    }
+  )
 
   app.post('/task-entry', isLoggedIn, async (req, res) => {
     try {
