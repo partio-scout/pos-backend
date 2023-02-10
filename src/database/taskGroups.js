@@ -73,6 +73,29 @@ export async function addTaskGroupEntryToArchive(taskGroupEntry) {
   }
 }
 
+export async function deleteTaskGroupEntry(taskGroupEntry) {
+  const { user_guid, created_by, taskgroup_guid, group_leader_name } =
+    taskGroupEntry
+  try {
+    // Create a notification about the state change
+    const notification = await createNotification({
+      itemGuid: taskgroup_guid,
+      itemType: 'AGE_GROUP',
+      notificationType: 'REMOVED',
+      userGuid: user_guid,
+      createdBy: created_by,
+      groupLeaderName: group_leader_name,
+    })
+    if (!notification) {
+      throw new Error('Failed to create a notification.')
+    }
+
+    return db.result('DELETE FROM task_group_entries WHERE id = $1', id)
+  } catch (error) {
+    console.error('Delete taskgroup entry - error: ', error)
+  }
+}
+
 export async function getTaskGroupEntries(user_guid) {
   try {
     const data = await db.any(
