@@ -6,6 +6,15 @@ export async function postAgegroupEntry(ageGroupEntry) {
     ageGroupEntry
 
   try {
+    const old_agegroup_entries = await db.any(
+      'SELECT * FROM completed_agegroup_entries WHERE agegroup_guid = $1 AND user_guid = $2',
+      [agegroup_guid, user_guid.toString()]
+    )
+
+    if (old_agegroup_entries?.length) {
+      return console.log('SKIP')
+    }
+
     // Create an entry for the agegroup entry state change
     const data = await db.one(
       'INSERT INTO completed_agegroup_entries(user_guid, created_by, agegroup_guid, completion_status) VALUES ($1, $2, $3, $4) RETURNING id',
@@ -54,8 +63,13 @@ export async function deleteAgeGroupEntry(ageGroupEntry) {
     }
 
     return db.result('DELETE FROM completed_agegroup_entries WHERE id = $1', id)
+    const data = await db.result(
+      'DELETE FROM completed_agegroup_entries WHERE user_guid = $1 AND agegroup_guid = $2',
+      [user_guid.toString(), agegroup_guid]
+    )
+    return data
   } catch (error) {
-    console.error('Remove agegroup entry - error: ', error)
+    console.log('error', error)
   }
 }
 
