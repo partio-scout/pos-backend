@@ -209,10 +209,23 @@ const main = async () => {
     async (req, res) => {
       try {
         const data = req.body
-        data.user_guid = req.user.membernumber
-        data.task_guid = req.params.agegroup_guid
-        const id = await deleteAgeGroupEntry(data)
-        res.json(id).status(200)
+        const promises = Object.values(data.itemsToBeDeleted).map((userIds) => {
+          const promises = userIds.map((user_guid) =>
+            Promise.resolve(
+              deleteAgeGroupEntry({
+                user_guid: Number(user_guid),
+                created_by: Number(req.user.membernumber),
+                agegroup_guid: req.params.agegroup_guid,
+                completed: 'DELETED',
+                group_leader_name: data.group_leader_name,
+              })
+            )
+          )
+          return promises
+        })
+        const iterablePromises = [].concat.apply([], promises)
+        const entries = await Promise.all(iterablePromises)
+        res.json(entries).status(200)
       } catch (e) {
         res.status(e.statusCode).send(e.message)
       }
