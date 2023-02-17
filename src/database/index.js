@@ -73,11 +73,10 @@ export async function postTaskEntry(taskEntry) {
 
 export async function archiveTaskEntry(entry) {
   await addTaskEntryToArchive(entry)
-  return await deleteTaskEntry(entry)
+  return await deleteTaskEntry(entry.id)
 }
 
 export async function archiveGroupMemberTaskEntry(entry) {
-  console.log(entry)
   try {
     const notification = await createNotification({
       itemGuid: Number(entry.task_guid),
