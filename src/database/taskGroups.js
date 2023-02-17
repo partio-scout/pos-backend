@@ -73,6 +73,25 @@ export async function addTaskGroupEntryToArchive(taskGroupEntry) {
   }
 }
 
+export async function deleteTaskGroupEntryGroupMember(taskGroupEntry) {
+  const {
+    user_guid,
+    created_by,
+    taskgroup_guid,
+    completed,
+    group_leader_name,
+  } = taskGroupEntry
+  try {
+    const data = await db.result(
+      'DELETE FROM task_group_entries WHERE user_guid = $1 AND taskgroup_guid = $2',
+      [user_guid.toString(), taskgroup_guid]
+    )
+    return data
+  } catch (error) {
+    console.log('error', error)
+  }
+}
+
 export async function deleteTaskGroupEntry(taskGroupEntry) {
   const { user_guid, created_by, taskgroup_guid, group_leader_name } =
     taskGroupEntry
@@ -94,6 +113,16 @@ export async function deleteTaskGroupEntry(taskGroupEntry) {
   } catch (error) {
     console.error('Delete taskgroup entry - error: ', error)
   }
+}
+
+export async function getTaskGroupEntry(user_guid, taskgroup_guid) {
+  try {
+    const data = await db.any(
+      'SELECT * FROM task_group_entries WHERE taskgroup_guid = $1 AND user_guid = $2',
+      [taskgroup_guid, user_guid.toString()]
+    )
+    return data
+  } catch (error) {}
 }
 
 export async function getTaskGroupEntries(user_guid) {
