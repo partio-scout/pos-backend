@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/node'
 import {
   db,
   postTaskEntry,
+  archiveGroupMemberTaskEntry,
   getTaskEntries,
   deleteActiveTask,
   postFavouriteTask,
@@ -366,6 +367,34 @@ const main = async () => {
               })
             )
           )
+        )
+        const flattedPromises = promises.flat()
+        const entries = await Promise.all(flattedPromises)
+        res.json(entries).status(200)
+      } catch (e) {
+        res.status(e.statusCode).send(e.message)
+      }
+    }
+  )
+
+  app.delete(
+    '/groups/archive-task-entry/:task_id',
+    isLoggedIn,
+    isGroupLeader,
+    async (req, res) => {
+      try {
+        const memberGroup = req.body
+        const promises = Object.values(memberGroup).map((userIds) =>
+          userIds.map((user_guid) => {
+            return Promise.resolve(
+              archiveGroupMemberTaskEntry({
+                user_guid: Number(user_guid),
+                created_by: Number(req.user.membernumber),
+                task_guid: req.params.task_id,
+                completion_status: 'ARCHIVED',
+              })
+            )
+          })
         )
         const flattedPromises = promises.flat()
         const entries = await Promise.all(flattedPromises)
