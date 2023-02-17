@@ -26,7 +26,7 @@ export async function postAgegroupEntry(ageGroupEntry) {
       data.id
     )
 
-    // Create a notification about the state change
+    // Create a notification about the deleted item
     const notification = await createNotification({
       itemGuid: agegroup_guid,
       itemType: 'AGE_GROUP',
@@ -62,7 +62,6 @@ export async function deleteAgeGroupEntry(ageGroupEntry) {
       throw new Error('Failed to create a notification.')
     }
 
-    return db.result('DELETE FROM completed_agegroup_entries WHERE id = $1', id)
     const data = await db.result(
       'DELETE FROM completed_agegroup_entries WHERE user_guid = $1 AND agegroup_guid = $2',
       [user_guid.toString(), agegroup_guid]
