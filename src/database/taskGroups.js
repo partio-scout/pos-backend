@@ -82,6 +82,18 @@ export async function deleteTaskGroupEntryGroupMember(taskGroupEntry) {
     group_leader_name,
   } = taskGroupEntry
   try {
+    // Create a notification about the state change
+    const notification = await createNotification({
+      itemGuid: taskgroup_guid,
+      itemType: 'TASK_GROUP',
+      notificationType: 'DELETED',
+      userGuid: user_guid,
+      createdBy: created_by,
+      groupLeaderName: group_leader_name,
+    })
+    if (!notification) {
+      throw new Error('Failed to create a notification.')
+    }
     const data = await db.result(
       'DELETE FROM task_group_entries WHERE user_guid = $1 AND taskgroup_guid = $2',
       [user_guid.toString(), taskgroup_guid]
@@ -99,8 +111,8 @@ export async function deleteTaskGroupEntry(taskGroupEntry) {
     // Create a notification about the state change
     const notification = await createNotification({
       itemGuid: taskgroup_guid,
-      itemType: 'AGE_GROUP',
-      notificationType: 'REMOVED',
+      itemType: 'TASK_GROUP',
+      notificationType: 'DELETED',
       userGuid: user_guid,
       createdBy: created_by,
       groupLeaderName: group_leader_name,
