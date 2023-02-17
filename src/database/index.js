@@ -9,7 +9,11 @@ import {
   getNotification,
 } from './notifications'
 
-import { postTaskGroupEntry, getTaskGroupEntries } from './taskGroups'
+import {
+  postTaskGroupEntry,
+  getTaskGroupEntries,
+  deleteTaskGroupEntryGroupMember,
+} from './taskGroups'
 
 const pgp = pgPromise()
 export const db = pgp(process.env.DATABASE_URL)
@@ -192,4 +196,8 @@ export {
 }
 
 // TaskGroups
-export { postTaskGroupEntry, getTaskGroupEntries }
+export {
+  postTaskGroupEntry,
+  getTaskGroupEntries,
+  deleteTaskGroupEntryGroupMember,
+}
