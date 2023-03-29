@@ -54,8 +54,8 @@ module.exports.configurePassport = async (clientUrl) => {
         )
 
         let ageGroup = 4 //Sudenpennut
-        if (memberData.age_groupId !== null) {
-          ageGroup = memberData.age_groupId
+        if (memberData.ageGroupId !== null) {
+          ageGroup = memberData.ageGroupId
         }
 
         scout.canMarkDone = !restrictedAgeGroups.includes(ageGroup)

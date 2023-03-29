@@ -8,12 +8,12 @@ export async function getProfile(userNumber) {
     {},
     {
       name: `${member.name.firstname} ${member.name.lastname}`,
-      defaultTroopId: member.default_troop_id,
-      ageGroupId: member.age_groupId || 4,
-      ageGroup: member.age_group || 'Sudenpennut',
+      defaultTroopId: member.defaultTroopId,
+      ageGroupId: member.ageGroupId || 4,
+      ageGroup: member.ageGroup || 'Sudenpennut',
       language: 'fi',
       troops: member.troops,
-      isLeader: member.is_leader || false,
+      isLeader: member.isLeader || false,
       image: memberImage,
     }
   )

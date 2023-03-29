@@ -28,7 +28,7 @@ async function getMemberData(groupMembers) {
         {},
         {
           memberId: groupMember.id.id,
-          isGroupLeader: groupMember.is_leader,
+          isGroupLeader: groupMember.isLeader,
           memberName:
             groupMember.name.firstname + ' ' + groupMember.name.lastname,
           memberTasks: taskEntries,
@@ -60,17 +60,17 @@ async function getAllGroups(userNumber) {
       const memberData = await getMemberData(groupMembers)
       const ageGroupId =
         (memberData[0] &&
-          (await getMember(memberData[0].memberId)).age_groupId) ||
+          (await getMember(memberData[0].memberId)).ageGroupId) ||
         4
       return Object.assign(
         {},
         {
           id: group.id,
           name: group.name,
-          ageGroup: groupInfo.age_groups[0],
+          ageGroup: groupInfo.ageGroups[0],
           ageGroupId,
           troop: groupInfo.troops.filter(
-            (troop) => troop.id === member.default_troop_id
+            (troop) => troop.id === member.defaultTroopId
           ),
           members: memberData,
         }
