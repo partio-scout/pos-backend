@@ -58,10 +58,12 @@ async function getAllGroups(userNumber) {
       const groupInfo = await getGroupInfo(userNumber, group.id)
       const groupMembers = await getGroupMembers(userNumber, group.id)
       const memberData = await getMemberData(groupMembers)
+      console.log('memberData: ', memberData)
       const ageGroupId =
         (memberData[0] &&
-          (await getMember(memberData[0].memberId)).ageGroupId) ||
+          (await getMember(memberData[0].memberId)).age_groupId) ||
         4
+
       return Object.assign(
         {},
         {
@@ -70,7 +72,7 @@ async function getAllGroups(userNumber) {
           ageGroup: groupInfo.ageGroups[0],
           ageGroupId,
           troop: groupInfo.troops.filter(
-            (troop) => troop.id === member.defaultTroopId
+            (troop) => troop.id === member.default_troop_id
           ),
           members: memberData,
         }

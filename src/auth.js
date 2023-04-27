@@ -42,23 +42,22 @@ module.exports.configurePassport = async (clientUrl) => {
 
       try {
         //TODO: Is there a way to not hard code these?
-        const restrictedAgeGroups = [35, 21, 13] //sudenpennut, seikkailijat, tarpojat
-        const memberData = await request(
-          `${process.env.KUKSA}/members/${profile.membernumber}`,
-          {
-            json: true,
-            auth: {
-              user: process.env.KUKSA_USER,
-              pass: process.env.KUKSA_PASS,
-            },
-          }
-        )
+        const url = `${process.env.KUKSA}/members/${profile.membernumber}`
+        console.log('Kuksa URL: ', url)
+        const restrictedAgeGroups = [4, 5, 6] //sudenpennut, seikkailijat, tarpojat
+        const memberData = await request(url, {
+          json: true,
+          auth: {
+            user: process.env.KUKSA_USER,
+            pass: process.env.KUKSA_PASS,
+          },
+        })
         console.log('membeData: ', memberData)
-        console.log('memberData.ageGroupId: ', memberData.ageGroupId)
+        console.log('memberData.ageGroupId: ', memberData.age_groupId)
 
-        let ageGroup = 35 //Sudenpennut
-        if (memberData.ageGroupId !== null) {
-          ageGroup = memberData.ageGroupId
+        let ageGroup = 4 //Sudenpennut
+        if (memberData.age_groupId !== null) {
+          ageGroup = memberData.age_groupId
         }
         console.log('ageGroupId: ', ageGroup)
         scout.canMarkDone = !restrictedAgeGroups.includes(ageGroup)

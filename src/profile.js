@@ -8,9 +8,9 @@ export async function getProfile(userNumber) {
     {},
     {
       name: `${member.name.firstname} ${member.name.lastname}`,
-      defaultTroopId: member.defaultTroopId,
-      ageGroupId: member.ageGroupId || 35,
-      ageGroup: member.ageGroup || 'Sudenpennut',
+      defaultTroopId: member.defaul_troop_id,
+      ageGroupId: member.age_roupId || 4,
+      ageGroup: member.age_group || 'Sudenpennut',
       language: 'fi',
       troops: member.troops,
       isLeader: member.isLeader || false,
@@ -18,5 +18,6 @@ export async function getProfile(userNumber) {
     }
   )
 
+  console.log('PROFILE: ', profile)
   return profile
 }
