@@ -38,6 +38,7 @@ module.exports.configurePassport = async (clientUrl) => {
         lastname: profile.lastname,
         membernumber: profile.membernumber,
       }
+      console.log('Logging in - profile: ', profile)
 
       try {
         //TODO: Is there a way to not hard code these?
@@ -52,6 +53,7 @@ module.exports.configurePassport = async (clientUrl) => {
             },
           }
         )
+        console.log('membeData: ', memberData)
         console.log('memberData.ageGroupId: ', memberData.ageGroupId)
 
         let ageGroup = 35 //Sudenpennut
