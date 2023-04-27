@@ -18,6 +18,5 @@ export async function getProfile(userNumber) {
     }
   )
 
-  console.log('PROFILE: ', profile)
   return profile
 }

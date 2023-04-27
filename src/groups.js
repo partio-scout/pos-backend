@@ -58,7 +58,6 @@ async function getAllGroups(userNumber) {
       const groupInfo = await getGroupInfo(userNumber, group.id)
       const groupMembers = await getGroupMembers(userNumber, group.id)
       const memberData = await getMemberData(groupMembers)
-      console.log('memberData: ', memberData)
       const ageGroupId =
         (memberData[0] &&
           (await getMember(memberData[0].memberId)).age_groupId) ||
