@@ -161,6 +161,7 @@ const main = async () => {
 
   app.post('/task-entry', isLoggedIn, async (req, res) => {
     try {
+      console.log('Post task entry user: ', req.user)
       const data = req.body
       const status = data.completion_status
       data.user_guid = req.user.membernumber

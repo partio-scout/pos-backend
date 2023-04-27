@@ -52,12 +52,13 @@ module.exports.configurePassport = async (clientUrl) => {
             },
           }
         )
+        console.log('memberData.ageGroupId: ', memberData.ageGroupId)
 
         let ageGroup = 35 //Sudenpennut
         if (memberData.ageGroupId !== null) {
           ageGroup = memberData.ageGroupId
         }
-
+        console.log('ageGroupId: ', ageGroup)
         scout.canMarkDone = !restrictedAgeGroups.includes(ageGroup)
       } catch (error) {
         console.log(error.name, error.message)
