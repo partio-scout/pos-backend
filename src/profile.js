@@ -13,7 +13,7 @@ export async function getProfile(userNumber) {
       ageGroup: member.age_group || 'Sudenpennut',
       language: 'fi',
       troops: member.troops,
-      isLeader: member.is_leader || false,
+      isLeader: member.isLeader || false,
       image: memberImage,
     }
   )
