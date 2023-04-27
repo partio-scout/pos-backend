@@ -9,7 +9,7 @@ export async function getProfile(userNumber) {
     {
       name: `${member.name.firstname} ${member.name.lastname}`,
       defaultTroopId: member.default_troop_id,
-      ageGroupId: member.age_groupId || 4,
+      ageGroupId: member.age_groupId || 35,
       ageGroup: member.age_group || 'Sudenpennut',
       language: 'fi',
       troops: member.troops,

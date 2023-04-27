@@ -41,7 +41,7 @@ module.exports.configurePassport = async (clientUrl) => {
 
       try {
         //TODO: Is there a way to not hard code these?
-        const restrictedAgeGroups = [4, 5, 6] //sudenpennut, seikkailijat, tarpojat
+        const restrictedAgeGroups = [35, 21, 13] //sudenpennut, seikkailijat, tarpojat
         const memberData = await request(
           `${process.env.KUKSA}/members/${profile.membernumber}`,
           {
@@ -53,7 +53,7 @@ module.exports.configurePassport = async (clientUrl) => {
           }
         )
 
-        let ageGroup = 4 //Sudenpennut
+        let ageGroup = 35 //Sudenpennut
         if (memberData.age_groupId !== null) {
           ageGroup = memberData.age_groupId
         }
