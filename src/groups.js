@@ -5,16 +5,12 @@ import {
   getGroupMembers,
 } from './kuksa'
 import { getTaskEntries, getTaskGroupEntries } from './database'
-import { getAgeGroupEntries } from './database/ageGroups'
 
 async function getMemberData(groupMembers) {
   return Promise.all(
     groupMembers.members.map(async (groupMember) => {
       const allMemberTaskEntries = await getTaskEntries(groupMember.id.id)
       const allMemberTaskGroupEntries = await getTaskGroupEntries(
-        groupMember.id.id
-      )
-      const allMemberAgeGroupEntries = await getAgeGroupEntries(
         groupMember.id.id
       )
       const taskEntries = allMemberTaskEntries.reduce((acc, task) => {
@@ -28,13 +24,6 @@ async function getMemberData(groupMembers) {
         },
         {}
       )
-      const ageGroupEntries = allMemberAgeGroupEntries.reduce(
-        (acc, agegroup) => {
-          acc[agegroup.agegroup_guid] = agegroup.completion_status
-          return acc
-        },
-        {}
-      )
       return Object.assign(
         {},
         {
@@ -44,7 +33,6 @@ async function getMemberData(groupMembers) {
             groupMember.name.firstname + ' ' + groupMember.name.lastname,
           memberTasks: taskEntries,
           memberTaskGroups: taskgroupEntries,
-          memberAgeGroups: ageGroupEntries,
         }
       )
     })
