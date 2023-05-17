@@ -2,11 +2,12 @@
 
 # 1. Project purpose
 
-TODO
+Partiolaiset Kompassi is a progressive web app made mainly for mobile devices. This is the backend repository of the application. Main purpose of the app is to store and show scout members's completed achievement badges. Groupleaders are also able to give new achievement badges to their groupmembers. Users that are not logged in can view different tasks and their info.
 
 # 2. Architecture
 
 This backend application and Postgre database are deployed to an Azure.
+This application is an Rest API for pos-frontend. It fetches userprofile data from Kuksa(rest-kehatieto), uses partio-id as a sign-in method and stores user's activity achievements data to pos-db.
 
 # 3. Development environment
 
@@ -20,12 +21,12 @@ You can create needed tables by running `yarn migrate-up`.
 ### Ngrok
 
 Install ngrok, it is preferred to use Homebrew `brew cask install ngrok`.
-Get content for ngrok-config from LastPass and place it to `~/.ngrok2/ngrok.yml`. Also edit your `/etc/hosts` and add `partio.ngrok.io` as a hostname for 127.0.0.1
+Get content for ngrok-config from 1Password and place it to `~/.ngrok2/ngrok.yml`. Also edit your `/etc/hosts` and add `partio.ngrok.io` as a hostname for 127.0.0.1
 Start ngrok with `yarn ngrok` or alternatively `ngrok start partio`.
 
 ### Environmental variables
 
-Get a working .env file from LastPass.
+Get a working .env file from 1Password.
 
 ## 3.2. Run tests
 
