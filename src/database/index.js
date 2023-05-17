@@ -9,7 +9,11 @@ import {
   getNotification,
 } from './notifications'
 
-import { postTaskGroupEntry, getTaskGroupEntries } from './taskGroups'
+import {
+  postTaskGroupEntry,
+  getTaskGroupEntries,
+  deleteTaskGroupEntryGroupMember,
+} from './taskGroups'
 
 const pgp = pgPromise()
 export const db = pgp(process.env.DATABASE_URL)
@@ -67,15 +71,38 @@ export async function postTaskEntry(taskEntry) {
   }
 }
 
-const archiveTaskEntry = async (entry) => {
+export async function archiveTaskEntry(entry) {
   await addTaskEntryToArchive(entry)
   return await deleteTaskEntry(entry.id)
+}
+
+export async function archiveGroupMemberTaskEntry(entry) {
+  try {
+    const notification = await createNotification({
+      itemGuid: Number(entry.task_guid),
+      itemType: 'TASK',
+      notificationType: entry.completion_status,
+      userGuid: entry.user_guid,
+      createdBy: entry.created_by,
+      groupLeaderName: '',
+    })
+    if (!notification) {
+      throw new Error('Failed to create a notification.')
+    }
+    await addTaskEntryToArchive(entry)
+    const data = await db.result(
+      'DELETE FROM task_entries WHERE user_guid = $1 AND task_guid = $2',
+      [entry.user_guid.toString(), entry.task_guid]
+    )
+    return data
+  } catch (error) {
+    console.log('error deleting and archiving task entry', error)
+  }
 }
 
 export async function addTaskEntryToArchive(taskEntry) {
   const { user_guid, created_at, created_by, task_guid, completion_status } =
     taskEntry
-
   try {
     const data = await db.one(
       'INSERT INTO task_entries_history(user_guid, created_at, created_by, task_guid, completion_status) VALUES ($1, $2, $3, $4, $5) RETURNING id',
@@ -192,4 +219,8 @@ export {
 }
 
 // TaskGroups
-export { postTaskGroupEntry, getTaskGroupEntries }
+export {
+  postTaskGroupEntry,
+  getTaskGroupEntries,
+  deleteTaskGroupEntryGroupMember,
+}

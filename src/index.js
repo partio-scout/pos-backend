@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/node'
 import {
   db,
   postTaskEntry,
+  archiveGroupMemberTaskEntry,
   getTaskEntries,
   deleteActiveTask,
   postFavouriteTask,
@@ -25,6 +26,11 @@ import taskGroups from './taskGroups'
 import { deleteOldNotifications } from './database/notifications'
 import https from 'https'
 import fs from 'fs'
+import {
+  postAgegroupEntry,
+  getAgeGroupEntries,
+  deleteAgeGroupEntry,
+} from './database/ageGroups'
 
 require('dotenv').config()
 
@@ -158,6 +164,74 @@ const main = async () => {
       canMarkDone: req.user.canMarkDone,
     })
   })
+
+  app.post(
+    '/groups/mark-agegroup-done/:agegroup_guid',
+    isLoggedIn,
+    isGroupLeader,
+    async (req, res) => {
+      try {
+        const userData = req.body
+        const promises = Object.values(userData.groups).map((userIds) => {
+          const promises = userIds.map((user_guid) =>
+            Promise.resolve(
+              postAgegroupEntry({
+                user_guid: Number(user_guid),
+                created_by: Number(req.user.membernumber),
+                agegroup_guid: req.params.agegroup_guid,
+                completed: 'COMPLETED',
+                group_leader_name: userData.group_leader_name,
+              })
+            )
+          )
+          return promises
+        })
+        const iterablePromises = [].concat.apply([], promises)
+        const entries = await Promise.all(iterablePromises)
+        res.json(entries).status(200)
+      } catch (e) {
+        res.status(e.statusCode).send(e.message)
+      }
+    }
+  )
+
+  app.get('/agegroup-entries', isLoggedIn, async (req, res) => {
+    try {
+      const entries = await getAgeGroupEntries(req.user.membernumber)
+      res.json(entries).status(200)
+    } catch (e) {
+      res.status(e.statusCode).send(e.message)
+    }
+  })
+
+  app.delete(
+    '/groups/delete-agegroup-entry/:agegroup_guid',
+    isLoggedIn,
+    async (req, res) => {
+      try {
+        const data = req.body
+        const promises = Object.values(data.itemsToBeDeleted).map((userIds) => {
+          const promises = userIds.map((user_guid) =>
+            Promise.resolve(
+              deleteAgeGroupEntry({
+                user_guid: Number(user_guid),
+                created_by: Number(req.user.membernumber),
+                agegroup_guid: req.params.agegroup_guid,
+                completed: 'DELETED',
+                group_leader_name: data.group_leader_name,
+              })
+            )
+          )
+          return promises
+        })
+        const iterablePromises = [].concat.apply([], promises)
+        const entries = await Promise.all(iterablePromises)
+        res.json(entries).status(200)
+      } catch (e) {
+        res.status(e.statusCode).send(e.message)
+      }
+    }
+  )
 
   app.post('/task-entry', isLoggedIn, async (req, res) => {
     try {
@@ -293,6 +367,34 @@ const main = async () => {
               })
             )
           )
+        )
+        const flattedPromises = promises.flat()
+        const entries = await Promise.all(flattedPromises)
+        res.json(entries).status(200)
+      } catch (e) {
+        res.status(e.statusCode).send(e.message)
+      }
+    }
+  )
+
+  app.delete(
+    '/groups/archive-task-entry/:task_id',
+    isLoggedIn,
+    isGroupLeader,
+    async (req, res) => {
+      try {
+        const memberGroup = req.body
+        const promises = Object.values(memberGroup).map((userIds) =>
+          userIds.map((user_guid) => {
+            return Promise.resolve(
+              archiveGroupMemberTaskEntry({
+                user_guid: Number(user_guid),
+                created_by: Number(req.user.membernumber),
+                task_guid: req.params.task_id,
+                completion_status: 'ARCHIVED',
+              })
+            )
+          })
         )
         const flattedPromises = promises.flat()
         const entries = await Promise.all(flattedPromises)
