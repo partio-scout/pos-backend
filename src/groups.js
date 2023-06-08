@@ -28,7 +28,7 @@ async function getMemberData(groupMembers) {
         {},
         {
           memberId: groupMember.id.id,
-          isGroupLeader: groupMember.isLeader,
+          isGroupLeader: groupMember.isLeader || groupMember.is_leader,
           memberName:
             groupMember.name.firstname + ' ' + groupMember.name.lastname,
           memberTasks: taskEntries,
@@ -68,7 +68,7 @@ async function getAllGroups(userNumber) {
         {
           id: group.id,
           name: group.name,
-          ageGroup: groupInfo.ageGroups[0],
+          ageGroup: groupInfo.ageGroups[0] || groupInfo.age_groups[0],
           ageGroupId,
           troop: groupInfo.troops.filter(
             (troop) => troop.id === member.default_troop_id
