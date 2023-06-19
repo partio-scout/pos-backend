@@ -39,7 +39,7 @@ async function getMemberData(groupMembers) {
         {},
         {
           memberId: groupMember.id.id,
-          isGroupLeader: groupMember.isLeader || groupMember.is_leader,
+          isGroupLeader: groupMember.isLeader,
           memberName:
             groupMember.name.firstname + ' ' + groupMember.name.lastname,
           memberTasks: taskEntries,

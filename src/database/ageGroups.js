@@ -12,7 +12,7 @@ export async function postAgegroupEntry(ageGroupEntry) {
     )
 
     if (old_agegroup_entries?.length) {
-      return console.log('SKIP')
+      return null
     }
 
     // Create an entry for the agegroup entry state change

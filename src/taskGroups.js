@@ -24,7 +24,7 @@ app.post(
             req.params.taskgroup_guid
           )
           if (old_taskgroup_entries.length) {
-            return console.log('SKIP TASKGROUP ENTRY')
+            return null
           }
           return Promise.resolve(
             postTaskGroupEntry({
