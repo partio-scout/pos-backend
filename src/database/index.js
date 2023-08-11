@@ -79,7 +79,7 @@ export async function archiveTaskEntry(entry) {
 export async function archiveGroupMemberTaskEntry(entry) {
   try {
     const notification = await createNotification({
-      itemGuid: Number(entry.task_guid),
+      itemGuid: entry.task_guid,
       itemType: 'TASK',
       notificationType: entry.completion_status,
       userGuid: entry.user_guid,
