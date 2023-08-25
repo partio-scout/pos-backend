@@ -69,8 +69,8 @@ fi
 
 selectNodeVersion () {
   # This is ugly, and will break installs for any other node version:
-  echo "Adding the path to node 14 bin directory to beginning of PATH"
-  PATH=/opt/nodejs/14/bin/:$PATH
+  echo "Adding the path to node 18 bin directory to beginning of PATH"
+  PATH=/opt/nodejs/18/bin/:$PATH
 }
 
 ##################################################################################################################################
