@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 env:
   AZURE_WEBAPP_NAME: pos-backend-staging # set this to your application's name
