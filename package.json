@@ -4,7 +4,7 @@
   "description": "Partio-ohjelmasovelluksen backend",
   "main": "index.js",
   "engines": {
-    "node": "18.x || 14.x"
+    "node": "18.x"
   },
   "scripts": {
     "start": "node dist/index.js",
