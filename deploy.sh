@@ -92,7 +92,7 @@ selectNodeVersion
 if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
   cd "$DEPLOYMENT_TARGET"
   echo "Running yarn install"
-  yarn install --ignore-engines
+  yarn install
   exitWithMessageOnError "yarn failed"
   cd - > /dev/null
 fi
