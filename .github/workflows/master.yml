@@ -10,6 +10,7 @@ env:
   AZURE_WEBAPP_NAME: pos-backend-staging # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: 'dist' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '24.x' # set this to the node version to use
+  PGSSLMODE: 'require' # set this to the pgsslmode to use for database connections
 
 jobs:
   build-and-deploy:
@@ -28,7 +29,7 @@ jobs:
           yarn install
           yarn build
       - name: run database migrations
-        run: DATABASE_URL=${{ secrets.DATABASE_URL_STAGING }} yarn migrate-up
+        run: DATABASE_URL=${{ secrets.DATABASE_URL_STAGING }} PGSSLMODE=${{ env.PGSSLMODE }} yarn migrate-up
       - name: copy web.config and node_modules to dist
         run: |
           cp web.config dist/web.config
