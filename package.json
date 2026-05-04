@@ -4,7 +4,7 @@
   "description": "Partio-ohjelmasovelluksen backend",
   "main": "index.js",
   "engines": {
-    "node": "18.x || 14.x"
+    "node": "24.x"
   },
   "scripts": {
     "start": "node dist/index.js",
@@ -44,14 +44,14 @@
     "rimraf": "3.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "7.14.8",
-    "@babel/core": "7.15.0",
-    "@babel/node": "7.14.9",
-    "@babel/preset-env": "7.15.0",
+    "@babel/cli": "7.28.6",
+    "@babel/core": "7.29.0",
+    "@babel/node": "7.29.0",
+    "@babel/preset-env": "7.29.2",
     "eslint": "7.32.0",
     "husky": "7.0.0",
     "nodemon": "2.0.15",
-    "prettier": "2.3.2",
+    "prettier": "^2.8.8",
     "pretty-quick": "3.1.3"
   }
 }

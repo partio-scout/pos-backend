@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  NODE_VERSION: '18.x' # set this to the node version to use
+  NODE_VERSION: '24.x' # set this to the node version to use
 
 jobs:
   build-and-deploy:
@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: yarn install and build
