@@ -49,20 +49,20 @@ else
   KUDU_SERVICE=true
 fi
 
-if [[ ! -n "$KUDU_SYNC_CMD" ]]; then
-  # Install kudu sync
-  echo Installing Kudu Sync
-  npm install kudusync -g --silent
-  exitWithMessageOnError "npm failed"
+#if [[ ! -n "$KUDU_SYNC_CMD" ]]; then
+# Install kudu sync
+echo Installing Kudu Sync
+npm install kudusync -g --silent
+exitWithMessageOnError "npm failed"
 
-  if [[ ! -n "$KUDU_SERVICE" ]]; then
-    # In case we are running locally this is the correct location of kuduSync
-    KUDU_SYNC_CMD=kuduSync
-  else
-    # In case we are running on kudu service this is the correct location of kuduSync
-    KUDU_SYNC_CMD=$APPDATA/npm/node_modules/kuduSync/bin/kuduSync
-  fi
+if [[ ! -n "$KUDU_SERVICE" ]]; then
+  # In case we are running locally this is the correct location of kuduSync
+  KUDU_SYNC_CMD=kuduSync
+else
+  # In case we are running on kudu service this is the correct location of kuduSync
+  KUDU_SYNC_CMD=$APPDATA/npm/node_modules/kuduSync/bin/kuduSync
 fi
+# fi
 
 # Node Helpers
 # ------------
