@@ -58,12 +58,12 @@ async function main() {
   file = file.split('\n')
 
   // Get first row for column headers
-  headers = file.shift().split(',')
+  let headers = file.shift().split(',')
 
   let json = []
   file.forEach(function (row) {
     // Loop through each row
-    tmp = {}
+    let tmp = {}
     row = row.split(',')
     for (let i = 0; i < headers.length; i++) {
       tmp[headers[i]] = row[i]
@@ -82,6 +82,10 @@ async function main() {
 
   const activityidsFromStrapiPromise = fetchActivitiesFromStrapi().then(
     function (activities) {
+      if (!activities) {
+        console.log('No activities returned from Strapi')
+        return []
+      }
       const ids = activities.map((activity) => {
         return activity.id.toString()
       })
