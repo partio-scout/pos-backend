@@ -3,7 +3,7 @@ const { Strategy: SamlStrategy } = require('@node-saml/passport-saml')
 const {
   fetch: fetchMetadata,
   toPassportConfig,
-} = require('@node-saml/passport-saml/lib/metadata')
+} = require('passport-saml-metadata')
 import axios from 'axios'
 import { getGroups } from './groups'
 

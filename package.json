@@ -34,6 +34,7 @@
     "node-cron": "3.0.2",
     "node-pg-migrate": "5.10.0",
     "passport": "0.7.0",
+    "passport-saml-metadata": "5.0.0",
     "pg": "8.7.1",
     "pg-promise": "10.11.0",
     "regenerator-runtime": "0.13.5",
