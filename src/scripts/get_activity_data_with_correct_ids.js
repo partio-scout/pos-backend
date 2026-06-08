@@ -3,7 +3,7 @@
 require('dotenv').config({ path: '../../.env' })
 const fs = require('fs')
 var path = require('path')
-var request = require('request-promise')
+var axios = require('axios')
 
 const appArgs2 = process.argv.slice(2)
 const fileName = appArgs2[0]
@@ -27,9 +27,11 @@ if (dataType == 'activity') {
 // Fetch all activities from POF
 async function fetchActivitiesFromStrapi() {
   try {
-    const countRes = await request(`${DBURL}/${strapiUrl}/count?_locale=fi`)
-    const activities = await request(`${DBURL}/${strapiUrl}?_limit=${countRes}`)
-    return activities
+    const countRes = await axios.get(`${DBURL}/${strapiUrl}/count?_locale=fi`)
+    const activities = await axios.get(
+      `${DBURL}/${strapiUrl}?_limit=${countRes.data}`
+    )
+    return activities.data
   } catch (e) {
     console.log(`Error getting activities: ${e}`)
     return null
@@ -39,8 +41,7 @@ async function fetchActivitiesFromStrapi() {
 async function main() {
   const activityidsFromStrapiPromise = fetchActivitiesFromStrapi().then(
     function (activities) {
-      const activitiesJson = JSON.parse(activities)
-      return activitiesJson
+      return activities
     }
   )
 
@@ -49,7 +50,6 @@ async function main() {
   )
 
   const activitiesJsonStrapio = activityIdsFromStrapi
-  console.log('Activities retrieved from pof')
 
   // Read CSV
   const filePath = path.join(fileName)
@@ -60,12 +60,12 @@ async function main() {
   // Split on row
   file = file.split('\n')
   // Get first row for column headers
-  headers = file.shift().split(',')
+  const headers = file.shift().split(',')
   let json = []
   console.log('Comparing csv file data and pof data')
   file.forEach(function (row) {
     // Loop through each row
-    rowJson = {}
+    const rowJson = {}
     row = row.split(',')
     for (var i = 0; i < headers.length; i++) {
       rowJson[headers[i]] = row[i]
@@ -74,10 +74,10 @@ async function main() {
     // Finf all wp_guid id's
     if (rowJson[idColumnName].length > 7) {
       rowJson[idColumnName]
-      for (var i = 0; i < activitiesJsonStrapio.length; i++) {
+      for (var j = 0; j < activitiesJsonStrapio.length; j++) {
         // Compare POF activity wp_guid to csv file task_guid id and if it is the same, replace task_guid with the correct id from POF
-        if (activitiesJsonStrapio[i].wp_guid == rowJson[idColumnName]) {
-          rowJson[idColumnName] = activitiesJsonStrapio[i].id
+        if (activitiesJsonStrapio[j].wp_guid == rowJson[idColumnName]) {
+          rowJson[idColumnName] = activitiesJsonStrapio[j].id
         }
       }
     }
@@ -89,6 +89,7 @@ async function main() {
 // Convert corrected datat to csv and write it to file
 function convertJsonToCsv(json) {
   console.log('Creating CSV file')
+
   var fields = Object.keys(json[0])
   var replacer = function (key, value) {
     return value === null ? '' : value

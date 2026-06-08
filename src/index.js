@@ -24,8 +24,8 @@ import 'regenerator-runtime/runtime.js'
 import notifications from './notifications'
 import taskGroups from './taskGroups'
 import { deleteOldNotifications } from './database/notifications'
-import https from 'https'
-import fs from 'fs'
+import https from 'node:https'
+import fs from 'node:fs'
 import {
   postAgegroupEntry,
   getAgeGroupEntries,
@@ -130,8 +130,9 @@ const main = async () => {
 
   app.get('/logout', function (req, res) {
     return strategy.logout(req, (err, uri) => {
-      req.logout()
-      return res.redirect(uri)
+      req.logout(() => {
+        return res.redirect(uri)
+      })
     })
   })
 
@@ -147,13 +148,15 @@ const main = async () => {
   )
 
   app.post('/logout/callback', async (req, res) => {
-    req.logout()
-    res.redirect(clientUrl)
+    req.logout(() => {
+      res.redirect(clientUrl)
+    })
   })
 
   app.get('/logout/callback', async (req, res) => {
-    req.logout()
-    res.redirect(clientUrl)
+    req.logout(() => {
+      res.redirect(clientUrl)
+    })
   })
 
   app.get('/user', isLoggedIn, async (req, res) => {

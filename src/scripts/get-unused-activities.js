@@ -1,13 +1,17 @@
 require('dotenv').config()
 const fs = require('fs')
 var path = require('path')
-var request = require('request-promise')
+var axios = require('axios')
 
 const DBURL = process.env.POF_BACKEND_STAGING
 async function fetchActivitiesFromStrapi() {
   try {
-    const countRes = await request(`${DBURL}/activities/count?_locale=fi`)
-    const activities = await request(`${DBURL}/activities?_limit=${countRes}`)
+    const { data: countRes } = await axios.get(
+      `${DBURL}/activities/count?_locale=fi`
+    )
+    const { data: activities } = await axios.get(
+      `${DBURL}/activities?_limit=${countRes}`
+    )
 
     return activities
   } catch (e) {
@@ -54,12 +58,12 @@ async function main() {
   file = file.split('\n')
 
   // Get first row for column headers
-  headers = file.shift().split(',')
+  let headers = file.shift().split(',')
 
   let json = []
   file.forEach(function (row) {
     // Loop through each row
-    tmp = {}
+    let tmp = {}
     row = row.split(',')
     for (let i = 0; i < headers.length; i++) {
       tmp[headers[i]] = row[i]
@@ -78,8 +82,12 @@ async function main() {
 
   const activityidsFromStrapiPromise = fetchActivitiesFromStrapi().then(
     function (activities) {
-      const activitiesJson = JSON.parse(activities)
-      const ids = activitiesJson.map((activity) => {
+      if (!activities || !Array.isArray(activities)) {
+        console.log('No activities returned from Strapi')
+        return []
+      }
+
+      const ids = activities.map((activity) => {
         return activity.id.toString()
       })
       return sortArraysAscending(ids)
