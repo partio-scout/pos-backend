@@ -130,8 +130,9 @@ const main = async () => {
 
   app.get('/logout', function (req, res) {
     return strategy.logout(req, (err, uri) => {
-      req.logout()
-      return res.redirect(uri)
+      req.logout(() => {
+        return res.redirect(uri)
+      })
     })
   })
 
@@ -147,13 +148,15 @@ const main = async () => {
   )
 
   app.post('/logout/callback', async (req, res) => {
-    req.logout()
-    res.redirect(clientUrl)
+    req.logout((err) => {
+      res.redirect(clientUrl)
+    })
   })
 
   app.get('/logout/callback', async (req, res) => {
-    req.logout()
-    res.redirect(clientUrl)
+    req.logout((err) => {
+      res.redirect(clientUrl)
+    })
   })
 
   app.get('/user', isLoggedIn, async (req, res) => {
