@@ -27,65 +27,11 @@ if (dataType == 'activity') {
 // Fetch all activities from POF
 async function fetchActivitiesFromStrapi() {
   try {
-    // Fetch first page to discover pagination info
-    const { data: firstJson } = await axios.get(`${DBURL}/${strapiUrl}`)
-
-    // Helper to extract items from various Strapi response shapes and flatten v4 "data/attributes"
-    const extractItems = (json) => {
-      if (!json) return []
-      if (Array.isArray(json)) return json
-      if (json.data && Array.isArray(json.data)) {
-        return json.data.map((d) =>
-          d && d.id && d.attributes
-            ? Object.assign({ id: d.id }, d.attributes)
-            : d
-        )
-      }
-      // look for any array on the top level (fallback)
-      for (const k of Object.keys(json)) {
-        if (Array.isArray(json[k])) return json[k]
-      }
-      return []
-    }
-
-    const items = extractItems(firstJson)
-
-    // Determine pagination info if available
-    const pagination =
-      (firstJson.meta && firstJson.meta.pagination) ||
-      (firstJson.pagination && firstJson.pagination) ||
-      null
-
-    if (!pagination || pagination.pageCount <= 1) {
-      // single page or no pagination info — return what we have
-      return items
-    }
-
-    const pageCount = pagination.pageCount || 1
-    const pageSize = pagination.pageSize || pagination.limit || 0
-
-    // Fetch remaining pages (start from 2 because we already fetched page 1)
-    for (let p = 2; p <= pageCount; p++) {
-      try {
-        // try Strapi v4 style first
-        const { data: pageJson } = await axios.get(
-          `${DBURL}/${strapiUrl}?pagination[page]=${p}&pagination[pageSize]=${pageSize}`
-        )
-        items.push(...extractItems(pageJson))
-      } catch (err) {
-        try {
-          // fallback to a generic page query
-          const { data: pageJson2 } = await axios.get(
-            `${DBURL}/${strapiUrl}?page=${p}&pageSize=${pageSize}`
-          )
-          items.push(...extractItems(pageJson2))
-        } catch (err2) {
-          console.log(`Error fetching page ${p}: ${err2}`)
-        }
-      }
-    }
-
-    return items
+    const countRes = await axios.get(`${DBURL}/${strapiUrl}/count?_locale=fi`)
+    const activities = await axios.get(
+      `${DBURL}/${strapiUrl}?_limit=${countRes.data}`
+    )
+    return activities.data
   } catch (e) {
     console.log(`Error getting activities: ${e}`)
     return null
