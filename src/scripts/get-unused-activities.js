@@ -82,10 +82,11 @@ async function main() {
 
   const activityidsFromStrapiPromise = fetchActivitiesFromStrapi().then(
     function (activities) {
-      if (!activities) {
+      if (!activities || !Array.isArray(activities)) {
         console.log('No activities returned from Strapi')
         return []
       }
+
       const ids = activities.map((activity) => {
         return activity.id.toString()
       })
