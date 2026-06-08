@@ -24,8 +24,8 @@ import 'regenerator-runtime/runtime.js'
 import notifications from './notifications'
 import taskGroups from './taskGroups'
 import { deleteOldNotifications } from './database/notifications'
-import https from 'https'
-import fs from 'fs'
+import https from 'node:https'
+import fs from 'node:fs'
 import {
   postAgegroupEntry,
   getAgeGroupEntries,

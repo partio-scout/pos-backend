@@ -3,7 +3,7 @@
 require('dotenv').config({ path: '../../.env' })
 const fs = require('fs')
 var path = require('path')
-var request = require('request-promise')
+var axios = require('axios')
 
 const appArgs2 = process.argv.slice(2)
 const fileName = appArgs2[0]
@@ -27,9 +27,65 @@ if (dataType == 'activity') {
 // Fetch all activities from POF
 async function fetchActivitiesFromStrapi() {
   try {
-    const countRes = await request(`${DBURL}/${strapiUrl}/count?_locale=fi`)
-    const activities = await request(`${DBURL}/${strapiUrl}?_limit=${countRes}`)
-    return activities
+    // Fetch first page to discover pagination info
+    const { data: firstJson } = await axios.get(`${DBURL}/${strapiUrl}`)
+
+    // Helper to extract items from various Strapi response shapes and flatten v4 "data/attributes"
+    const extractItems = (json) => {
+      if (!json) return []
+      if (Array.isArray(json)) return json
+      if (json.data && Array.isArray(json.data)) {
+        return json.data.map((d) =>
+          d && d.id && d.attributes
+            ? Object.assign({ id: d.id }, d.attributes)
+            : d
+        )
+      }
+      // look for any array on the top level (fallback)
+      for (const k of Object.keys(json)) {
+        if (Array.isArray(json[k])) return json[k]
+      }
+      return []
+    }
+
+    const items = extractItems(firstJson)
+
+    // Determine pagination info if available
+    const pagination =
+      (firstJson.meta && firstJson.meta.pagination) ||
+      (firstJson.pagination && firstJson.pagination) ||
+      null
+
+    if (!pagination || pagination.pageCount <= 1) {
+      // single page or no pagination info — return what we have
+      return items
+    }
+
+    const pageCount = pagination.pageCount || 1
+    const pageSize = pagination.pageSize || pagination.limit || 0
+
+    // Fetch remaining pages (start from 2 because we already fetched page 1)
+    for (let p = 2; p <= pageCount; p++) {
+      try {
+        // try Strapi v4 style first
+        const { data: pageJson } = await axios.get(
+          `${DBURL}/${strapiUrl}?pagination[page]=${p}&pagination[pageSize]=${pageSize}`
+        )
+        items.push(...extractItems(pageJson))
+      } catch (err) {
+        try {
+          // fallback to a generic page query
+          const { data: pageJson2 } = await axios.get(
+            `${DBURL}/${strapiUrl}?page=${p}&pageSize=${pageSize}`
+          )
+          items.push(...extractItems(pageJson2))
+        } catch (err2) {
+          console.log(`Error fetching page ${p}: ${err2}`)
+        }
+      }
+    }
+
+    return items
   } catch (e) {
     console.log(`Error getting activities: ${e}`)
     return null
@@ -39,8 +95,7 @@ async function fetchActivitiesFromStrapi() {
 async function main() {
   const activityidsFromStrapiPromise = fetchActivitiesFromStrapi().then(
     function (activities) {
-      const activitiesJson = JSON.parse(activities)
-      return activitiesJson
+      return activities
     }
   )
 
@@ -49,7 +104,6 @@ async function main() {
   )
 
   const activitiesJsonStrapio = activityIdsFromStrapi
-  console.log('Activities retrieved from pof')
 
   // Read CSV
   const filePath = path.join(fileName)
@@ -89,6 +143,7 @@ async function main() {
 // Convert corrected datat to csv and write it to file
 function convertJsonToCsv(json) {
   console.log('Creating CSV file')
+
   var fields = Object.keys(json[0])
   var replacer = function (key, value) {
     return value === null ? '' : value

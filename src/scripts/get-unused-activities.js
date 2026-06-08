@@ -1,13 +1,17 @@
 require('dotenv').config()
 const fs = require('fs')
 var path = require('path')
-var request = require('request-promise')
+var axios = require('axios')
 
 const DBURL = process.env.POF_BACKEND_STAGING
 async function fetchActivitiesFromStrapi() {
   try {
-    const countRes = await request(`${DBURL}/activities/count?_locale=fi`)
-    const activities = await request(`${DBURL}/activities?_limit=${countRes}`)
+    const { data: countRes } = await axios.get(
+      `${DBURL}/activities/count?_locale=fi`
+    )
+    const { data: activities } = await axios.get(
+      `${DBURL}/activities?_limit=${countRes}`
+    )
 
     return activities
   } catch (e) {
@@ -78,8 +82,7 @@ async function main() {
 
   const activityidsFromStrapiPromise = fetchActivitiesFromStrapi().then(
     function (activities) {
-      const activitiesJson = JSON.parse(activities)
-      const ids = activitiesJson.map((activity) => {
+      const ids = activities.map((activity) => {
         return activity.id.toString()
       })
       return sortArraysAscending(ids)

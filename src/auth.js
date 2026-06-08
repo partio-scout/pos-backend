@@ -1,7 +1,10 @@
 const passport = require('passport')
-const metadata = require('passport-saml-metadata')
-const SamlStrategy = require('passport-saml').Strategy
-import request from 'request-promise'
+const { Strategy: SamlStrategy } = require('@node-saml/passport-saml')
+const {
+  fetch: fetchMetadata,
+  toPassportConfig,
+} = require('@node-saml/passport-saml/lib/metadata')
+import axios from 'axios'
 import { getGroups } from './groups'
 
 // const issuer = 'https://api.pos-staging.azurewebsites.net/'
@@ -14,19 +17,17 @@ const metadataConfig = {
 
 module.exports.configurePassport = async (clientUrl) => {
   try {
-    const reader = await metadata.fetch(metadataConfig)
+    const reader = await fetchMetadata(metadataConfig)
 
-    const strategyConfig = metadata.toPassportConfig(reader)
+    const strategyConfig = toPassportConfig(reader)
     Object.assign(strategyConfig, {
-      realm: issuer,
+      entryPoint: strategyConfig.entryPoint || process.env.ENTRY_POINT,
       issuer,
-      protocol: 'samlp',
       callbackUrl: process.env.PARTIOID_CALLBACK,
-      logoutCallbackUrl: process.env.PARTIOID_LOGOUT_CALLBACK,
+      logoutUrl: process.env.PARTIOID_LOGOUT_URL + clientUrl,
       // FIXME: Does not work in development environment
       // Because the clientUrl is not configured to partio id as an allowed client logout throws an error
       // Might work if we set the staging env app url here instead of the localhost clientUrl?
-      logoutUrl: process.env.PARTIOID_LOGOUT_URL + clientUrl,
     })
 
     const samlStrategy = new SamlStrategy(strategyConfig, async function (
@@ -43,11 +44,10 @@ module.exports.configurePassport = async (clientUrl) => {
         //TODO: Is there a way to not hard code these?
         const url = `${process.env.KUKSA}/members/${profile.membernumber}`
         const restrictedAgeGroups = [4, 5, 6] //sudenpennut, seikkailijat, tarpojat
-        const memberData = await request(url, {
-          json: true,
+        const { data: memberData } = await axios.get(url, {
           auth: {
-            user: process.env.KUKSA_USER,
-            pass: process.env.KUKSA_PASS,
+            username: process.env.KUKSA_USER,
+            password: process.env.KUKSA_PASS,
           },
         })
 

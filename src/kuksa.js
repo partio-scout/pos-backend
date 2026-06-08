@@ -1,28 +1,27 @@
 require('dotenv').config()
-import request from 'request-promise'
+import axios from 'axios'
 const options = {
-  json: true,
   auth: {
-    user: process.env.KUKSA_USER,
-    pass: process.env.KUKSA_PASS,
+    username: process.env.KUKSA_USER,
+    password: process.env.KUKSA_PASS,
   },
 }
 
 export async function getMember(memberId) {
-  const memberData = await request(
+  const { data } = await axios.get(
     `${process.env.KUKSA}/members/${memberId}`,
     options
   )
-  return memberData
+  return data
 }
 
 export async function getMemberImage(memberId) {
   try {
-    const memberImage = await request(
+    const { data } = await axios.get(
       `${process.env.KUKSA}/members/${memberId}/image`,
       options
     )
-    return memberImage
+    return data
   } catch (e) {
     console.log(`Error getting the member image ${e}`)
     return null
@@ -31,11 +30,11 @@ export async function getMemberImage(memberId) {
 
 export async function getGroupsFromKuksa(memberId) {
   try {
-    const groups = await request(
+    const { data } = await axios.get(
       `${process.env.KUKSA}/members/${memberId}/groups`,
       options
     )
-    return groups
+    return data
   } catch (e) {
     console.log(`Error getting the member's groups ${e}`)
     return null
@@ -44,12 +43,12 @@ export async function getGroupsFromKuksa(memberId) {
 
 export async function getGroupInfo(memberId, groupId) {
   try {
-    const groupInfo = await request(
+    const { data } = await axios.get(
       `${process.env.KUKSA}/members/${memberId}/groups/${groupId}`,
       options
     )
 
-    return groupInfo
+    return data
   } catch (e) {
     console.log(`Error getting the group info ${e}`)
     return null
@@ -58,12 +57,12 @@ export async function getGroupInfo(memberId, groupId) {
 
 export async function getGroupMembers(memberId, groupId) {
   try {
-    const groupMembers = await request(
+    const { data } = await axios.get(
       `${process.env.KUKSA}/members/${memberId}/groups/${groupId}/members`,
       options
     )
 
-    return groupMembers
+    return data
   } catch (e) {
     console.log(`Error getting the group's members ${e}`)
     return null
