@@ -19,7 +19,10 @@ module.exports.configurePassport = async (clientUrl) => {
   try {
     const reader = await fetchMetadata(metadataConfig)
 
-    const strategyConfig = toPassportConfig(reader)
+    // During the IdP cert rollover, metadata lists the new signing cert first and
+    // the retiring one last. The default keeps only the last cert, so trust both
+    // until the old certificate is removed from the metadata.
+    const strategyConfig = toPassportConfig(reader, { multipleCerts: true })
     Object.assign(strategyConfig, {
       entryPoint: strategyConfig.entryPoint || process.env.ENTRY_POINT,
       issuer,
