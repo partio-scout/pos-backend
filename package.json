@@ -4,7 +4,7 @@
   "description": "Partio-ohjelmasovelluksen backend",
   "main": "index.js",
   "engines": {
-    "node": "24.x"
+    "node": ">=24.22.1 <25"
   },
   "scripts": {
     "start": "node dist/index.js",
@@ -22,7 +22,7 @@
     "@node-saml/passport-saml": "^5.1.0",
     "@sentry/node": "6.19.7",
     "@sentry/tracing": "6.19.7",
-    "axios": "1.17.0",
+    "axios": "1.20.0",
     "body-parser": "1.20.5",
     "connect-pg-simple": "6.1.0",
     "cookie-parser": "1.4.6",
@@ -50,5 +50,8 @@
     "nodemon": "2.0.15",
     "prettier": "^2.8.8",
     "pretty-quick": "3.1.3"
+  },
+  "resolutions": {
+    "axios": "1.20.0"
   }
 }
