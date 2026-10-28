@@ -31,6 +31,7 @@ jobs:
         run: |
           cp web.config dist/web.config
           cp package.json dist/package.json
+          cp .nvmrc dist/.nvmrc
           cp yarn.lock dist/yarn.lock
           cp .deployment dist/.deployment
           cp deploy.sh dist/deploy.sh
